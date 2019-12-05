@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset
+from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
 
@@ -47,6 +48,7 @@ def main(args):
 
     LOGGER.info("Loading train data %s", args.train_data)
     train = svmranking_dataset(args.train_data, normalize=True)
+    train.to(args.device)
 
     LOGGER.info("Loading click log %s", args.click_log)
     click_log = clicklog_dataset(train, args.click_log)
@@ -80,7 +82,8 @@ def main(args):
     for e in range(1, 1 + args.epochs):
         loader = torch.utils.data.DataLoader(
             click_log, batch_size=args.batch_size, shuffle=True,
-            collate_fn=create_clicklog_collate_fn(max_list_size=args.max_list_size))
+            collate_fn=create_clicklog_collate_fn(
+                max_list_size=args.max_list_size, device=args.device))
 
         for i, batch in enumerate(loader):
             linear_model.train()
@@ -102,7 +105,8 @@ def main(args):
                         "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
                         "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
                         "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size, device=args.device)
+                    }, collate_fn=create_svmranking_collate_fn(device=device),
+                    batch_size=args.batch_size, device=args.device)
                     LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
                     LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
                     LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
@@ -112,7 +116,8 @@ def main(args):
                         "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
                         "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
                         "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size, device=args.device)
+                    }, collate_fn=create_svmranking_collate_fn(device=device),
+                    batch_size=args.batch_size, device=args.device)
                     LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
                     LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
                     LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
