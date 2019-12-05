@@ -16,11 +16,19 @@ LOGGER = logging.getLogger(__name__)
 
 class ClicklogDataset(torch.utils.data.Dataset):
     """A click log dataset."""
-    def __init__(self, ranking_dataset, click_log):
+    def __init__(self, ranking_dataset, click_log, clip=None):
         self._ranking_dataset = ranking_dataset
         self._clicked_docs = click_log["clicked_docs"]
         self._qids = click_log["qids"]
         self._propensities = click_log["propensities"]
+        if clip is not None:
+            self._propensities = np.clip(
+                self._propensities, a_min=clip, a_max=None)
+        self._clip = clip
+
+    @property
+    def propensities(self):
+        return self._propensities
 
     def __len__(self):
         return self._clicked_docs.shape[0]
@@ -48,20 +56,21 @@ def create_clicklog_collate_fn(rng=np.random.RandomState(42),
     return _collate_fn
 
 
-def clicklog_dataset(ranking_dataset, click_log_file_path):
+def clicklog_dataset(ranking_dataset, click_log_file_path, clip=None):
     """Loads a click log dataset from given file path.
 
     Arguments:
         ranking_dataset: The svmranking dataset that was used to generate
             clicks.
         click_log_file_path: Path to the generated click log file.
+        clip: Value to clip propensities at (if None, apply no clipping).
 
     Returns:
         A ClicklogDataset used for ranking experiments.
     """
     with open(click_log_file_path, "rb") as f:
         click_log = pickle.load(f)
-    return ClicklogDataset(ranking_dataset, click_log)
+    return ClicklogDataset(ranking_dataset, click_log, clip)
 
 
 def simulate_perfect(rankings, n, ys, cutoff=None):

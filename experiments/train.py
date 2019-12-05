@@ -36,6 +36,9 @@ def get_parser():
     parser.add_argument("--test_data", type=str, default=None)
     parser.add_argument("--optimizer", default="sgd",
                         choices=["sgd", "adam", "adagrad"])
+    parser.add_argument("--ips_strategy", default="none",
+                        choices=["none", "weight", "sample"])
+    parser.add_argument("--ips_clip", type=float, default=None)
     parser.add_argument("--objective", default="rank",
                         choices=["rank", "normrank", "dcg"])
     parser.add_argument("--seed", type=int, default=42)
@@ -61,7 +64,7 @@ def main(args):
     train = svmranking_dataset(args.train_data, normalize=True)
 
     LOGGER.info("Loading click log %s", args.click_log)
-    click_log = clicklog_dataset(train, args.click_log)
+    click_log = clicklog_dataset(train, args.click_log, clip=args.ips_clip)
 
     if args.vali_data is not None:
         LOGGER.info("Loading vali data %s", args.vali_data)
@@ -84,6 +87,15 @@ def main(args):
         "adagrad": lambda: torch.optim.Adagrad(linear_model.parameters(), args.lr)
     }[args.optimizer]()
     loss_fn = AdditivePairwiseLoss(args.objective)
+
+    if args.ips_strategy == "sample":
+        propensities = torch.FloatTensor(click_log.propensities)
+        weights = (1.0 / propensities)
+        probabilities = weights / torch.sum(weights)
+        sampler = torch.utils.data.sampler.WeightedRandomSampler(
+            probabilities, len(click_log))
+    else:
+        sampler = torch.utils.data.sampler.RandomSampler(click_log)
 
     LOGGER.info("Start training")
     count = 0
@@ -110,7 +122,7 @@ def main(args):
 
     for e in range(1, 1 + args.epochs):
         loader = torch.utils.data.DataLoader(
-            click_log, batch_size=args.batch_size, shuffle=True,
+            click_log, batch_size=args.batch_size, sampler=sampler,
             collate_fn=create_clicklog_collate_fn(
                 max_list_size=args.max_list_size))
 
@@ -119,7 +131,10 @@ def main(args):
             xs, ys, n, p = batch["features"], batch["relevance"], batch["n"], batch["propensity"]
             xs, ys, n, p = xs.to(args.device), ys.to(args.device), n.to(args.device), p.to(args.device)
             scores = linear_model(xs)
-            loss = torch.mean(loss_fn(scores, ys, n) / p)
+            loss = loss_fn(scores, ys, n)
+            if args.ips_strategy == "weight":
+                loss = loss / p
+            loss = torch.mean(loss)
 
             optimizer.zero_grad()
             loss.backward()
