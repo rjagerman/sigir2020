@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 
 import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset
-from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
 
