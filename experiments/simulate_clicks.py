@@ -36,14 +36,14 @@ class ClicklogDataset(torch.utils.data.Dataset):
 
 
 def create_clicklog_collate_fn(rng=np.random.RandomState(42),
-                               max_list_size=None, device=None):
+                               max_list_size=None):
     """Creates a collate_fn for click log datasets."""
     svmrank_collate_fn = create_svmranking_collate_fn(
-        rng, max_list_size, device=device)
+        rng, max_list_size)
     def _collate_fn(batch):
         out = svmrank_collate_fn(batch)
         out["propensity"] = torch.FloatTensor(
-            [sample["propensity"] for sample in batch], device=device)
+            [sample["propensity"] for sample in batch])
         return out
     return _collate_fn
 
