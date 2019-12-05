@@ -103,7 +103,7 @@ def main(args):
                         "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
                         "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
                         "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size)
+                    }, batch_size=args.batch_size, device=device)
                     LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
                     LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
                     LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
@@ -113,7 +113,7 @@ def main(args):
                         "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
                         "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
                         "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size)
+                    }, batch_size=args.batch_size, device=device)
                     LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
                     LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
                     LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
