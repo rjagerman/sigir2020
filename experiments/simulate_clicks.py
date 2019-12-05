@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 
 import numpy as np
 import torch
+from joblib import Memory
 from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.util import mask_padded_values
