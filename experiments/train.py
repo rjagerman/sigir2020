@@ -1,5 +1,6 @@
 """Counterfactual Learning to Rank training procedure."""
 import logging
+import json
 from argparse import ArgumentParser
 
 import torch
@@ -14,12 +15,19 @@ from experiments.simulate_clicks import create_clicklog_collate_fn
 
 LOGGER = logging.getLogger(__name__)
 
+METRICS = {
+    "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
+    "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
+    "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
+}
+
 
 def get_parser():
     """Gets the parser to create arguments for `main`."""
     parser = ArgumentParser()
     parser.add_argument("--train_data", type=str, required=True)
     parser.add_argument("--click_log", type=str, required=True)
+    parser.add_argument("--output", type=str, default=None)
     parser.add_argument("--vali_data", type=str, default=None)
     parser.add_argument("--test_data", type=str, default=None)
     parser.add_argument("--optimizer", default="sgd",
@@ -77,6 +85,25 @@ def main(args):
     count = 0
     sample_count = 0
     batch_count = 0
+    out_results = {}
+    if args.vali is not None:
+        out_results["vali"] = {key: [] for key in METRICS.keys()}
+        out_results["vali"]["x"] = []
+    if args.test is not None:
+        out_results["test"] = {key: [] for key in METRICS.keys()}
+        out_results["test"]["x"] = []
+
+    if args.vali_data is not None:
+        results = evaluate(
+            vali, linear_model, METRICS,
+            batch_size=args.batch_size, device=args.device)
+        record_results(out_results["vali"], sample_count, results)
+    if args.test_data is not None:
+        results = evaluate(
+            test, linear_model, METRICS,
+            batch_size=args.batch_size, device=args.device)
+        record_results(out_results["test"], sample_count, results)
+
     for e in range(1, 1 + args.epochs):
         loader = torch.utils.data.DataLoader(
             click_log, batch_size=args.batch_size, shuffle=True,
@@ -99,28 +126,31 @@ def main(args):
             batch_count += 1
             if count > args.log_every:
                 if args.vali_data is not None:
-                    results = evaluate(vali, linear_model, {
-                        "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
-                        "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
-                        "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size, device=args.device)
-                    LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
-                    LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
-                    LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
-
+                    results = evaluate(
+                        vali, linear_model, METRICS,
+                        batch_size=args.batch_size, device=args.device)
+                    record_results(out_results["vali"], sample_count, results)
                 if args.test_data is not None:
-                    results = evaluate(test, linear_model, {
-                        "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
-                        "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
-                        "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-                    }, batch_size=args.batch_size, device=args.device)
-                    LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
-                    LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
-                    LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
+                    results = evaluate(
+                        test, linear_model, METRICS,
+                        batch_size=args.batch_size, device=args.device)
+                    record_results(out_results["test"], sample_count, results)
                 count = count % args.log_every
-
         LOGGER.info("Finished epoch %d", e)
+
+    LOGGER.info("Writing results to output")
+    if args.output is not None:
+        with open(args.output, "wt") as f:
+            json.dump(out_results, f, indent=2)
+
     LOGGER.info("Done")
+
+
+def record_results(out_results, x, results):
+    for key in METRICS.keys():
+        LOGGER.info("[%7d] %-7s : %.4f", x, key, results[key])
+        out_results[key].append(result[key])
+    out_results["x"].append(x)
 
 
 if __name__ == "__main__":
