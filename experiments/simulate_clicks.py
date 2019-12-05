@@ -12,6 +12,8 @@ from pytorchltr.util import rank_by_score
 
 
 LOGGER = logging.getLogger(__name__)
+memory = Memory("./.cache", compress=6)
+svmranking_dataset = memory.cache(svmranking_dataset)
 
 
 class ClicklogDataset(torch.utils.data.Dataset):

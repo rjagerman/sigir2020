@@ -16,12 +16,10 @@ from experiments.simulate_clicks import create_clicklog_collate_fn
 
 
 LOGGER = logging.getLogger(__name__)
-
 METRICS = {
     "arp": lambda scores, ys, n: arp(scores, ys, n),
     "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
 }
-
 memory = Memory("./.cache", compress=6)
 svmranking_dataset = memory.cache(svmranking_dataset)
 
