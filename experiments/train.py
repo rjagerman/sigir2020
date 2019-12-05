@@ -7,6 +7,8 @@ import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
+from pytorchltr.evaluation.arp import arp
+from joblib import Memory
 
 from experiments.evaluate import evaluate
 from experiments.simulate_clicks import clicklog_dataset
@@ -16,10 +18,12 @@ from experiments.simulate_clicks import create_clicklog_collate_fn
 LOGGER = logging.getLogger(__name__)
 
 METRICS = {
-    "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
-    "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
+    "arp": lambda scores, ys, n: arp(scores, ys, n),
     "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
 }
+
+memory = Memory("./.cache", compress=6)
+svmranking_dataset = memory.cache(svmranking_dataset)
 
 
 def get_parser():
@@ -86,10 +90,10 @@ def main(args):
     sample_count = 0
     batch_count = 0
     out_results = {}
-    if args.vali is not None:
+    if args.vali_data is not None:
         out_results["vali"] = {key: [] for key in METRICS.keys()}
         out_results["vali"]["x"] = []
-    if args.test is not None:
+    if args.test_data is not None:
         out_results["test"] = {key: [] for key in METRICS.keys()}
         out_results["test"]["x"] = []
 
@@ -124,7 +128,7 @@ def main(args):
             count += batch["features"].shape[0]
             sample_count += batch["features"].shape[0]
             batch_count += 1
-            if count > args.log_every:
+            if count >= args.log_every:
                 if args.vali_data is not None:
                     results = evaluate(
                         vali, linear_model, METRICS,
@@ -138,8 +142,8 @@ def main(args):
                 count = count % args.log_every
         LOGGER.info("Finished epoch %d", e)
 
-    LOGGER.info("Writing results to output")
     if args.output is not None:
+        LOGGER.info("Writing results to output")
         with open(args.output, "wt") as f:
             json.dump(out_results, f, indent=2)
 
@@ -149,7 +153,7 @@ def main(args):
 def record_results(out_results, x, results):
     for key in METRICS.keys():
         LOGGER.info("[%7d] %-7s : %.4f", x, key, results[key])
-        out_results[key].append(result[key])
+        out_results[key].append(results[key])
     out_results["x"].append(x)
 
 
