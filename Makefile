@@ -8,7 +8,11 @@ all: $(BUILD)/baselines/yahoo.pth
 
 # Baseline rankers trained on fractions of data
 $(BUILD)/baselines/yahoo.pth : | $(BUILD)/baselines/
-	python -m experiments.baseline --train_data $(YAHOO_DIR)/train.txt --output $(BUILD)/baselines/yahoo.pth --optimizer sgd --lr 0.0001 --fraction 0.01
+	python -m experiments.baseline --train_data $(YAHOO_DIR)/train.txt \
+		--output $(BUILD)/baselines/yahoo.pth \
+		--optimizer sgd \
+		--lr 0.0001 \
+		--fraction 0.01
 
 $(BUILD)/baselines/ :
 	mkdir -p $(BUILD)/baselines/
