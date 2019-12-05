@@ -63,6 +63,7 @@ def main(args):
             train, batch_size=args.batch_size, shuffle=True,
             collate_fn=create_svmranking_collate_fn())
         for i, batch in enumerate(loader):
+            linear_model.train()
             xs, ys, n = batch["features"], batch["relevance"], batch["n"]
             scores = linear_model(xs)
             loss = torch.mean(loss_fn(scores, ys, n))

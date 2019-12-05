@@ -21,7 +21,6 @@ def evaluate(dataset, model, metrics,
             for metric in metrics.keys():
                 values = metrics[metric](scores, ys, n)
                 out_metrics[metric].extend(values.tolist())
-    model.train()
     return {
         metric: float(torch.mean(torch.FloatTensor(values)))
         for metric, values in out_metrics.items()

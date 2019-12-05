@@ -83,6 +83,7 @@ def main(args):
             collate_fn=create_clicklog_collate_fn(max_list_size=args.max_list_size))
 
         for i, batch in enumerate(loader):
+            linear_model.train()
             xs, ys, n, p = batch["features"], batch["relevance"], batch["n"], batch["propensity"]
             xs, ys, n, p = xs.to(args.device), ys.to(args.device), n.to(args.device), p.to(args.device)
             scores = linear_model(xs)
