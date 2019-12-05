@@ -32,6 +32,7 @@ def get_parser():
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--max_list_size", type=int, default=None)
+    parser.add_argument("--log_every", type=int, default=1000)
     return parser
 
 
@@ -73,7 +74,6 @@ def main(args):
     loss_fn = AdditivePairwiseLoss(args.objective)
 
     LOGGER.info("Start training")
-    log_every = 1000
     count = 0
     sample_count = 0
     batch_count = 0
@@ -96,7 +96,7 @@ def main(args):
             count += batch["features"].shape[0]
             sample_count += batch["features"].shape[0]
             batch_count += 1
-            if count > log_every:
+            if count > args.log_every:
                 if args.vali_data is not None:
                     results = evaluate(vali, linear_model, {
                         "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
@@ -116,7 +116,7 @@ def main(args):
                     LOGGER.info("[%7d] ndcg@3 : %.4f", sample_count, results["ndcg@3"])
                     LOGGER.info("[%7d] ndcg@5 : %.4f", sample_count, results["ndcg@5"])
                     LOGGER.info("[%7d] ndcg@10: %.4f", sample_count, results["ndcg@10"])
-                count = count % log_every
+                count = count % args.log_every
 
         LOGGER.info("Finished epoch %d", e)
     LOGGER.info("Done")
