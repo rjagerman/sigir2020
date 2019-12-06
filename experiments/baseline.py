@@ -3,6 +3,7 @@ import logging
 from argparse import ArgumentParser
 
 import torch
+from joblib import Memory
 from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
@@ -12,6 +13,8 @@ from experiments.evaluate import evaluate
 
 
 LOGGER = logging.getLogger(__name__)
+memory = Memory("./.cache", compress=6)
+svmranking_dataset = memory.cache(svmranking_dataset)
 
 
 def get_parser():
