@@ -99,7 +99,9 @@ def main(args):
     count = 0
     sample_count = 0
     batch_count = 0
-    out_results = {}
+    out_results = {
+        "args": vars(args)
+    }
     if args.vali_data is not None:
         out_results["vali"] = {key: [] for key in METRICS.keys()}
         out_results["vali"]["x"] = []
