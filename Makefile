@@ -3,8 +3,9 @@ YAHOO_DIR := /Users/rolfjagerman/Datasets/Yahoo/set1
 BUILD := build
 
 # Default is to run the entire experimental pipeline
-.PHONY: all clicklogs
-all: $(BUILD)/baselines/yahoo.pth
+.PHONY: all clicklogs baselines
+all: baselines clicklogs
+baselines: $(BUILD)/baslines/yahoo.pth
 clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
 
 # Baseline rankers trained on fractions of data
