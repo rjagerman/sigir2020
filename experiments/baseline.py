@@ -8,6 +8,7 @@ from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
+from pytorchltr.evaluation.arp import arp
 
 from experiments.evaluate import evaluate
 
@@ -79,12 +80,10 @@ def main(args):
 
         if args.vali_data is not None:
             results = evaluate(vali, linear_model, {
-                "ndcg@3": lambda scores, ys, n: ndcg(scores, ys, n, k=3),
-                "ndcg@5": lambda scores, ys, n: ndcg(scores, ys, n, k=5),
+                "arp": lambda scores, ys, n: arp(scores, ys, n),
                 "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
             })
-            LOGGER.info("ndcg@3 : %.4f", results["ndcg@3"])
-            LOGGER.info("ndcg@5 : %.4f", results["ndcg@5"])
+            LOGGER.info("arp    : %.4f", results["arp"])
             LOGGER.info("ndcg@10: %.4f", results["ndcg@10"])
 
     LOGGER.info("Saving model to %s", args.output)
