@@ -26,7 +26,7 @@ $(BUILD)/clicklogs/yahoo_1m_perfect.clog : $(BUILD)/baselines/yahoo.pth | $(BUIL
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior perfect
 
@@ -34,7 +34,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 0.0 \
@@ -45,7 +45,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 1.0 \
@@ -56,7 +56,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 1.5 \
@@ -67,7 +67,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog : $(BUILD)/baselines/yahoo.pth
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 2.0 \
@@ -78,7 +78,7 @@ $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog : $(BUILD)/baselines/yahoo.p
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
 		--output_log $@ \
-		--sessions 2_000_000 \
+		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior nearrandom \
 		--eta 1.0
