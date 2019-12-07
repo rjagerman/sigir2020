@@ -4,24 +4,22 @@ import json
 from argparse import ArgumentParser
 
 import torch
-from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
 from pytorchltr.evaluation.arp import arp
-from joblib import Memory
 
 from experiments.evaluate import evaluate
-from experiments.simulate_clicks import clicklog_dataset
-from experiments.simulate_clicks import create_clicklog_collate_fn
+from experiments.click_log import clicklog_dataset
+from experiments.click_log import create_clicklog_collate_fn
+from experiments.util import load_dataset
 
 
 LOGGER = logging.getLogger(__name__)
+
 METRICS = {
     "arp": lambda scores, ys, n: arp(scores, ys, n),
     "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
 }
-memory = Memory("./.cache", compress=6)
-svmranking_dataset = memory.cache(svmranking_dataset)
 
 
 def get_parser():
@@ -59,19 +57,19 @@ def main(args):
     torch.manual_seed(args.seed)
 
     LOGGER.info("Loading train data %s", args.train_data)
-    train = svmranking_dataset(args.train_data, normalize=True)
+    train = load_dataset(args.train_data, normalize=True)
 
     LOGGER.info("Loading click log %s", args.click_log)
     click_log = clicklog_dataset(train, args.click_log, clip=args.ips_clip)
 
     if args.vali_data is not None:
         LOGGER.info("Loading vali data %s", args.vali_data)
-        vali = svmranking_dataset(
+        vali = load_dataset(
             args.vali_data, normalize=True, filter_queries=True)
 
     if args.test_data is not None:
         LOGGER.info("Loading test data %s", args.test_data)
-        test = svmranking_dataset(
+        test = load_dataset(
             args.test_data, normalize=True, filter_queries=True)
 
     LOGGER.info("Creating linear model")

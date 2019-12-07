@@ -3,19 +3,16 @@ import logging
 from argparse import ArgumentParser
 
 import torch
-from joblib import Memory
-from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
 from pytorchltr.evaluation.dcg import ndcg
 from pytorchltr.evaluation.arp import arp
 
 from experiments.evaluate import evaluate
+from experiments.util import load_dataset
 
 
 LOGGER = logging.getLogger(__name__)
-memory = Memory("./.cache", compress=6)
-svmranking_dataset = memory.cache(svmranking_dataset)
 
 
 def get_parser():
@@ -39,11 +36,11 @@ def main(args):
     torch.manual_seed(args.seed)
 
     LOGGER.info("Loading train data %s", args.train_data)
-    train = svmranking_dataset(args.train_data, normalize=True)
+    train = load_dataset(args.train_data, normalize=True)
 
     if args.vali_data is not None:
         LOGGER.info("Loading vali data %s", args.vali_data)
-        vali = svmranking_dataset(
+        vali = load_dataset(
             args.vali_data, normalize=True, filter_queries=True)
 
     LOGGER.info("Subsampling train data by %.3f", args.fraction)
