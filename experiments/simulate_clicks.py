@@ -10,11 +10,13 @@ from pytorchltr.dataset.svmrank import svmranking_dataset
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.util import mask_padded_values
 from pytorchltr.util import rank_by_score
+from pytorchltr.click_simulation import simulate_perfect
+from pytorchltr.click_simulation import simulate_position
+from pytorchltr.click_simulation import simulate_nearrandom
 
 
 LOGGER = logging.getLogger(__name__)
-memory = Memory("./.cache", compress=6)
-svmranking_dataset = memory.cache(svmranking_dataset)
+svmranking_dataset = Memory("./.cache", compress=6).cache(svmranking_dataset)
 
 
 class ClicklogDataset(torch.utils.data.Dataset):
@@ -74,126 +76,6 @@ def clicklog_dataset(ranking_dataset, click_log_file_path, clip=None):
     with open(click_log_file_path, "rb") as f:
         click_log = pickle.load(f)
     return ClicklogDataset(ranking_dataset, click_log, clip)
-
-
-def simulate_perfect(rankings, n, ys, cutoff=None):
-    """Simulates perfect clicks.
-
-    Arguments:
-        rankings: A tensor of size (batch_size, list_size) containing indices
-            of the ranked list
-        n: A tensor of size (batch_size) containing the per-query list size.
-        ys: A tensor of size (batch_size, list_size) indicating the relevance
-            labels of each document.
-        cutoff: (optional) An integer indicating the cutoff for the simulation.
-
-    Returns:
-        A tuple of two tensors of size (batch_size, list_size), where the first
-        indicates the clicks with 0.0 and 1.0 and the second indicates the
-        propensity of observing each document.
-    """
-    if cutoff is not None:
-        n = torch.min(torch.ones_like(n) * cutoff, n)
-    obs_prob = torch.ones_like(rankings, dtype=torch.float)
-    obs_prob = mask_padded_values(obs_prob, n, mask_value=0.0, mutate=True)
-
-    ranked_ys = torch.gather(ys, 1, rankings)
-    click_prob = torch.zeros_like(ranked_ys, dtype=torch.float)
-    click_prob[ranked_ys == 0] = 0.0
-    click_prob[ranked_ys == 1] = 0.2
-    click_prob[ranked_ys == 2] = 0.4
-    click_prob[ranked_ys == 3] = 0.8
-    click_prob[ranked_ys == 4] = 1.0
-
-    clicks = torch.bernoulli(click_prob * obs_prob)
-    invert_ranking = torch.argsort(rankings, dim=1)
-    return (
-        torch.gather(clicks, 1, invert_ranking).to(dtype=torch.long),
-        torch.gather(obs_prob, 1, invert_ranking)
-    )
-
-
-def simulate_position(rankings, n, ys, cutoff=None, eta=1.0, pos_prob=1.0,
-                      neg_prob=0.1):
-    """Simulates position-biased clicks.
-
-    Arguments:
-        rankings: A tensor of size (batch_size, list_size) containing indices
-            of the ranked list
-        n: A tensor of size (batch_size) containing the per-query list size.
-        ys: A tensor of size (batch_size, list_size) indicating the relevance
-            labels of each document.
-        cutoff: (optional) An integer indicating the cutoff for the simulation.
-        eta: A float >= 0.0, indicating the severity of click bias.
-        pos_prob: A float in [0.0, 1.0] indicating the probability of clicking
-            a relevant document.
-        neg_prob: A float in [0.0, 1.0] indicating the probability of clicking
-            a non-relevant document.
-
-    Returns:
-        A tuple of two tensors of size (batch_size, list_size), where the first
-        indicates the clicks with 0.0 and 1.0 and the second indicates the
-        propensity of observing each document.
-    """
-    if cutoff is not None:
-        n = torch.min(torch.ones_like(n) * cutoff, n)
-    obs_prob = 1.0 / (1.0 + torch.arange(rankings.shape[1])) ** eta
-    obs_prob = torch.repeat_interleave(obs_prob[None, :], rankings.shape[0], dim=0)
-    obs_prob = mask_padded_values(obs_prob, n, mask_value=0.0, mutate=True)
-
-    ranked_ys = torch.gather(ys, 1, rankings)
-    click_prob = torch.zeros_like(ranked_ys, dtype=torch.float)
-    click_prob[ranked_ys == 0] = neg_prob
-    click_prob[ranked_ys == 1] = neg_prob
-    click_prob[ranked_ys == 2] = neg_prob
-    click_prob[ranked_ys == 3] = pos_prob
-    click_prob[ranked_ys == 4] = pos_prob
-
-    clicks = torch.bernoulli(click_prob * obs_prob)
-    invert_ranking = torch.argsort(rankings, dim=1)
-    return (
-        torch.gather(clicks, 1, invert_ranking).to(dtype=torch.long),
-        torch.gather(obs_prob, 1, invert_ranking)
-    )
-
-
-def simulate_nearrandom(rankings, n, ys, cutoff=None, eta=1.0):
-    """Simulates near-random position-biased clicks.
-
-    Arguments:
-        rankings: A tensor of size (batch_size, list_size) containing indices
-            of the ranked list
-        n: A tensor of size (batch_size) containing the per-query list size.
-        ys: A tensor of size (batch_size, list_size) indicating the relevance
-            labels of each document.
-        cutoff: (optional) An integer indicating the cutoff for the simulation.
-        eta: A float >= 0.0, indicating the severity of click bias.
-
-    Returns:
-        A tuple of two tensors of size (batch_size, list_size), where the first
-        indicates the clicks with 0.0 and 1.0 and the second indicates the
-        propensity of observing each document.
-    """
-    if cutoff is not None:
-        n = torch.min(torch.ones_like(n) * cutoff, n)
-    obs_prob = 1.0 / (1.0 + torch.arange(rankings.shape[1])) ** eta
-    obs_prob = torch.repeat_interleave(obs_prob[None, :], rankings.shape[0], dim=0)
-    obs_prob = mask_padded_values(obs_prob, n, mask_value=0.0, mutate=True)
-
-    ranked_ys = torch.gather(ys, 1, rankings)
-    click_prob = torch.zeros_like(ranked_ys, dtype=torch.float)
-    click_prob[ranked_ys == 0] = 0.40
-    click_prob[ranked_ys == 1] = 0.45
-    click_prob[ranked_ys == 2] = 0.50
-    click_prob[ranked_ys == 3] = 0.55
-    click_prob[ranked_ys == 4] = 0.60
-
-    clicks = torch.bernoulli(click_prob * obs_prob)
-    invert_ranking = torch.argsort(rankings, dim=1)
-    return (
-        torch.gather(clicks, 1, invert_ranking).to(dtype=torch.long),
-        torch.gather(obs_prob, 1, invert_ranking)
-    )
 
 
 def get_parser():
