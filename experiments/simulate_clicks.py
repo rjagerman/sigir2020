@@ -98,6 +98,6 @@ def main(args):
 
 if __name__ == "__main__":
     logging.basicConfig(
-        format="[%(asctime)s, %(levelname)s, %(module)s, %(threadName)s] %(message)s",
+        format="[%(asctime)s, %(levelname)s, %(module)s] %(message)s",
         level=logging.INFO)
     main(get_parser().parse_args())

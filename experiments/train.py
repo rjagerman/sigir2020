@@ -216,15 +216,8 @@ def main(args):
     LOGGER.info("Done")
 
 
-def record_results(out_results, x, results):
-    for key in METRICS.keys():
-        LOGGER.info("[%7d] %-7s : %.4f", x, key, results[key])
-        out_results[key].append(results[key])
-    out_results["x"].append(x)
-
-
 if __name__ == "__main__":
     logging.basicConfig(
-        format="[%(asctime)s, %(levelname)s, %(module)s, %(threadName)s] %(message)s",
+        format="[%(asctime)s, %(levelname)s, %(module)s] %(message)s",
         level=logging.INFO)
     main(get_parser().parse_args())
