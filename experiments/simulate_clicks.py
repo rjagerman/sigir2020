@@ -11,7 +11,7 @@ from pytorchltr.click_simulation import simulate_nearrandom
 from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 from pytorchltr.util import rank_by_score
 
-from experiments.util import load_dataset
+from experiments.dataset import load_ranking_dataset
 
 
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def main(args):
     """Runs the click simulation with given arguments."""
     torch.manual_seed(args.seed)
     LOGGER.info("Loading input data")
-    dataset = load_dataset(args.input_data, normalize=True)
+    dataset = load_ranking_dataset(args.input_data, normalize=True)
     indices = torch.randint(len(dataset), (args.sessions,))
     dataset = torch.utils.data.Subset(dataset, indices)
     loader = torch.utils.data.DataLoader(
@@ -85,7 +85,7 @@ def main(args):
 
     LOGGER.info("Compressing click log to numpy arrays")
     click_log = {
-        "svmrank_dataset": args.input_data,
+        "args": args,
         "clicked_docs": np.array(clicked_docs, dtype=np.int32),
         "propensities": np.array(propensities, dtype=np.float32),
         "qids": np.array(qids, dtype=np.int32)

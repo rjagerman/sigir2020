@@ -9,7 +9,7 @@ from pytorchltr.evaluation.dcg import ndcg
 from pytorchltr.evaluation.arp import arp
 
 from experiments.evaluate import evaluate
-from experiments.util import load_dataset
+from experiments.dataset import load_ranking_dataset
 
 
 LOGGER = logging.getLogger(__name__)
@@ -36,11 +36,11 @@ def main(args):
     torch.manual_seed(args.seed)
 
     LOGGER.info("Loading train data %s", args.train_data)
-    train = load_dataset(args.train_data, normalize=True)
+    train = load_ranking_dataset(args.train_data, normalize=True)
 
     if args.vali_data is not None:
         LOGGER.info("Loading vali data %s", args.vali_data)
-        vali = load_dataset(
+        vali = load_ranking_dataset(
             args.vali_data, normalize=True, filter_queries=True)
 
     LOGGER.info("Subsampling train data by %.3f", args.fraction)

@@ -3,10 +3,11 @@ YAHOO_DIR := /Users/rolfjagerman/Datasets/Yahoo/set1
 BUILD := build
 
 # Default is to run the entire experimental pipeline
-.PHONY: all clicklogs baselines
+.PHONY: all baselines clicklogs
 all: baselines clicklogs
 baselines: $(BUILD)/baslines/yahoo.pth
 clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
+
 
 # Baseline rankers trained on fractions of data
 $(BUILD)/baselines/yahoo.pth : | $(BUILD)/baselines/
@@ -37,9 +38,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth
 		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
-		--eta 0.0 \
-		--pos_prob 1.0 \
-		--neg_prob 0.1
+		--eta 0.0
 
 $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
@@ -48,9 +47,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth
 		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
-		--eta 1.0 \
-		--pos_prob 1.0 \
-		--neg_prob 0.1
+		--eta 1.0
 
 $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
@@ -59,9 +56,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth
 		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
-		--eta 1.5 \
-		--pos_prob 1.0 \
-		--neg_prob 0.1
+		--eta 1.5
 
 $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
@@ -70,9 +65,7 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog : $(BUILD)/baselines/yahoo.pth
 		--sessions 10_000_000 \
 		--max_clicks 1_000_000 \
 		--behavior position \
-		--eta 2.0 \
-		--pos_prob 1.0 \
-		--neg_prob 0.1
+		--eta 2.0
 
 $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \

@@ -4,22 +4,24 @@ import json
 from argparse import ArgumentParser
 
 import torch
+from ignite.engine import Engine
+from ignite.engine import Events
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
-from pytorchltr.evaluation.dcg import ndcg
-from pytorchltr.evaluation.arp import arp
+from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 
 from experiments.evaluate import evaluate
+from experiments.evaluate import NDCG
+from experiments.evaluate import ARP
 from experiments.click_log import clicklog_dataset
 from experiments.click_log import create_clicklog_collate_fn
-from experiments.util import load_dataset
+from experiments.dataset import load_click_dataset
+from experiments.dataset import load_ranking_dataset
+from experiments.util import get_torch_device
+from experiments.util import JsonLogger
+from experiments.util import every_n_iteration
 
 
 LOGGER = logging.getLogger(__name__)
-
-METRICS = {
-    "arp": lambda scores, ys, n: arp(scores, ys, n),
-    "ndcg@10": lambda scores, ys, n: ndcg(scores, ys, n, k=10)
-}
 
 
 def get_parser():
@@ -39,126 +41,175 @@ def get_parser():
                         choices=["rank", "normrank", "dcg"])
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--enable_cuda", action="store_true", default=False)
-    parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--batch_size", type=int, default=50)
+    parser.add_argument("--eval_batch_size", type=int, default=500)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--max_list_size", type=int, default=None)
     parser.add_argument("--log_every", type=int, default=1000)
+    parser.add_argument("--eval_every", type=int, default=1000)
     return parser
+
+
+def create_pairwise_loss(objective, ips_strategy):
+    """Creates a pairwise loss objective
+
+    Arguments:
+        objective: A string indicating the AdditivePairwiseLoss objective.
+        ips_strategy: A string indicating the IPS strategy to use.
+
+    Returns:
+        A loss function that takes 4 arguments: (scores, ys, n, p).
+    """
+    pairwise_loss_fn = AdditivePairwiseLoss(objective)
+    if ips_strategy == "weight":
+        def _loss_fn(scores, ys, n, p):
+            return pairwise_loss_fn(scores, ys, n) / p
+    else:
+        def _loss_fn(scores, ys, n, p):
+            return pairwise_loss_fn(scores, ys, n)
+    return _loss_fn
+
+
+def create_cfltr_trainer(optimizer, loss_fn, model, device, metrics={}):
+    """Creates a training `Engine` for counterfactual LTR.
+
+    Arguments:
+        optimizer: The optimizer to use.
+        loss_fn: The loss function to call.
+        model: The model to predict scores with.
+        device: The device to move batches to.
+        metrics: Metrics to compute per step.
+
+    Returns:
+        An `Engine` used for training.
+    """
+    def _update_fn(engine, batch):
+        model.train()
+        xs, clicks, n, relevance, p = (
+            batch["features"], batch["clicks"], batch["n"], batch["relevance"],
+            batch["propensity"])
+        xs, clicks, n, relevance, p = (
+            xs.to(device), clicks.to(device), n.to(device),
+            relevance.to(device), p.to(device))
+        model.train()
+        optimizer.zero_grad()
+        scores = model(xs)
+        loss = torch.mean(loss_fn(scores, clicks, n, p))
+        loss.backward()
+        optimizer.step()
+        return scores, relevance, n
+
+    engine = Engine(_update_fn)
+    for name, metric in metrics.items():
+        metric.attach(engine, name)
+
+    return engine
+
+
+def create_ltr_evaluator(model, device, metrics):
+    """Creates an evaluation `Engine` for LTR.
+
+    Arguments:
+        model: The model to predict scores with.
+        device: The device to move batches to.
+        metrics: Metrics to compute per step.
+
+    Returns:
+        An `Engine` used for evaluation.
+    """
+    def _inference_fn(engine, batch):
+        model.eval()
+        with torch.no_grad():
+            xs, relevance, n = batch["features"], batch["relevance"], batch["n"]
+            xs, relevance, n = xs.to(device), relevance.to(device), n.to(device)
+            scores = model(xs)
+            return scores, relevance, n
+
+    engine = Engine(_inference_fn)
+    for name, metric in metrics.items():
+        metric.attach(engine, name)
+
+    return engine
 
 
 def main(args):
     """Trains the baseline ranker using given arguments."""
-    if args.enable_cuda and torch.cuda.is_available():
-        args.device = torch.device("cuda")
-        LOGGER.info("Using device %s", args.device)
-    else:
-        args.device = torch.device("cpu")
+
+    LOGGER.info("Setting device and seeding RNG")
+    args.device = get_torch_device(args.enable_cuda)
     torch.manual_seed(args.seed)
 
-    LOGGER.info("Loading train data %s", args.train_data)
-    train = load_dataset(args.train_data, normalize=True)
+    LOGGER.info("Loading click log for training")
+    train_data_loader, input_dimensionality = load_click_dataset(
+        args.train_data, args.click_log, args.ips_strategy, args.ips_clip,
+        args.batch_size, args.max_list_size)
 
-    LOGGER.info("Loading click log %s", args.click_log)
-    click_log = clicklog_dataset(train, args.click_log, clip=args.ips_clip)
-
+    eval_data_loaders = {}
     if args.vali_data is not None:
-        LOGGER.info("Loading vali data %s", args.vali_data)
-        vali = load_dataset(
-            args.vali_data, normalize=True, filter_queries=True)
+        LOGGER.info("Loading vali data")
+        eval_data_loaders["vali"] = torch.utils.data.DataLoader(
+            load_ranking_dataset(args.vali_data, normalize=True,
+                                 filter_queries=True),
+            shuffle=False, batch_size=args.eval_batch_size,
+            collate_fn=create_svmranking_collate_fn())
 
     if args.test_data is not None:
-        LOGGER.info("Loading test data %s", args.test_data)
-        test = load_dataset(
-            args.test_data, normalize=True, filter_queries=True)
+        LOGGER.info("Loading test data")
+        eval_data_loaders["vali"] = torch.utils.data.DataLoader(
+            load_ranking_dataset(args.test_data, normalize=True,
+                                 filter_queries=True),
+            shuffle=False, batch_size=args.eval_batch_size,
+            collate_fn=create_svmranking_collate_fn())
 
     LOGGER.info("Creating linear model")
-    linear_model = torch.nn.Linear(train[0]["features"].shape[1], 1)
+    linear_model = torch.nn.Linear(input_dimensionality, 1)
     linear_model = linear_model.to(device=args.device)
 
-    LOGGER.info("Creating optimizer and loss function")
+    LOGGER.info("Creating loss function")
+    loss_fn = create_pairwise_loss(args.objective, args.ips_strategy)
+
+    LOGGER.info("Creating optimizer")
     optimizer = {
         "sgd": lambda: torch.optim.SGD(linear_model.parameters(), args.lr),
         "adam": lambda: torch.optim.Adam(linear_model.parameters(), args.lr),
-        "adagrad": lambda: torch.optim.Adagrad(linear_model.parameters(), args.lr)
+        "adagrad": lambda: torch.optim.Adagrad(
+            linear_model.parameters(), args.lr)
     }[args.optimizer]()
-    loss_fn = AdditivePairwiseLoss(args.objective)
 
-    if args.ips_strategy == "sample":
-        propensities = torch.FloatTensor(click_log.propensities)
-        weights = (1.0 / propensities)
-        probabilities = weights / torch.sum(weights)
-        sampler = torch.utils.data.sampler.WeightedRandomSampler(
-            probabilities, len(click_log))
-    else:
-        sampler = torch.utils.data.sampler.RandomSampler(click_log)
+    LOGGER.info("Creating result logger")
+    json_logger = JsonLogger("./test.json", indent=1)
 
-    LOGGER.info("Start training")
-    count = 0
-    sample_count = 0
-    batch_count = 0
-    out_results = {
-        "args": vars(args)
-    }
-    if args.vali_data is not None:
-        out_results["vali"] = {key: [] for key in METRICS.keys()}
-        out_results["vali"]["x"] = []
-    if args.test_data is not None:
-        out_results["test"] = {key: [] for key in METRICS.keys()}
-        out_results["test"]["x"] = []
+    LOGGER.info("Setup training engine")
+    trainer = create_cfltr_trainer(
+        optimizer, loss_fn, linear_model, args.device)
 
-    if args.vali_data is not None:
-        results = evaluate(
-            vali, linear_model, METRICS,
-            batch_size=args.batch_size, device=args.device)
-        record_results(out_results["vali"], sample_count, results)
-    if args.test_data is not None:
-        results = evaluate(
-            test, linear_model, METRICS,
-            batch_size=args.batch_size, device=args.device)
-        record_results(out_results["test"], sample_count, results)
+    for eval_name, eval_data_loader in eval_data_loaders.items():
+        LOGGER.info("Setup %s engine", eval_name)
+        metrics = {"ndcg@10": NDCG(k=10), "arp": ARP()}
+        evaluator = create_ltr_evaluator(
+            linear_model, args.device, metrics)
 
-    for e in range(1, 1 + args.epochs):
-        loader = torch.utils.data.DataLoader(
-            click_log, batch_size=args.batch_size, sampler=sampler,
-            collate_fn=create_clicklog_collate_fn(
-                max_list_size=args.max_list_size))
+        # Run evaluation
+        def run_evaluation(trainer):
+            evaluator.run(eval_data_loader)
+        trainer.add_event_handler(Events.STARTED, run_evaluation)
+        trainer.add_event_handler(
+            Events.ITERATION_COMPLETED,
+            every_n_iteration(trainer, args.eval_every, run_evaluation))
 
-        for i, batch in enumerate(loader):
-            linear_model.train()
-            xs, ys, n, p = batch["features"], batch["relevance"], batch["n"], batch["propensity"]
-            xs, ys, n, p = xs.to(args.device), ys.to(args.device), n.to(args.device), p.to(args.device)
-            scores = linear_model(xs)
-            loss = loss_fn(scores, ys, n)
-            if args.ips_strategy == "weight":
-                loss = loss / p
-            loss = torch.mean(loss)
+        # Write results to file when evaluation finishes.
+        @evaluator.on(Events.COMPLETED)
+        def log_results(evaluator):
+            json_logger.append_all(
+                eval_name, trainer.state.iteration, evaluator.state.metrics)
+            json_logger.write_to_disk()
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+    LOGGER.info("Run train loop")
+    trainer.run(train_data_loader, args.epochs)
 
-            count += batch["features"].shape[0]
-            sample_count += batch["features"].shape[0]
-            batch_count += 1
-            if count >= args.log_every:
-                if args.vali_data is not None:
-                    results = evaluate(
-                        vali, linear_model, METRICS,
-                        batch_size=args.batch_size, device=args.device)
-                    record_results(out_results["vali"], sample_count, results)
-                if args.test_data is not None:
-                    results = evaluate(
-                        test, linear_model, METRICS,
-                        batch_size=args.batch_size, device=args.device)
-                    record_results(out_results["test"], sample_count, results)
-                count = count % args.log_every
-        LOGGER.info("Finished epoch %d", e)
-
-    if args.output is not None:
-        LOGGER.info("Writing results to output")
-        with open(args.output, "wt") as f:
-            json.dump(out_results, f, indent=2)
+    LOGGER.info("Writing final results to disk.")
+    json_logger.write_to_disk()
 
     LOGGER.info("Done")
 

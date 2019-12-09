@@ -30,8 +30,8 @@ class ClicklogDataset(torch.utils.data.Dataset):
         qid = self._qids[index]
         rd_index = self._ranking_dataset.get_index(qid)
         sample = self._ranking_dataset[rd_index]
-        sample["relevance"] = torch.zeros_like(sample["relevance"])
-        sample["relevance"][self._clicked_docs[index]] = 1
+        sample["clicks"] = torch.zeros_like(sample["relevance"])
+        sample["clicks"][self._clicked_docs[index]] = 1
         sample["propensity"] = self._propensities[index]
         return sample
 
@@ -43,6 +43,9 @@ def create_clicklog_collate_fn(rng=np.random.RandomState(42),
         rng, max_list_size)
     def _collate_fn(batch):
         out = svmrank_collate_fn(batch)
+        out["clicks"] = torch.zeros_like(out["relevance"])
+        for i, sample in enumerate(batch):
+            out["clicks"][i, 0:sample["clicks"].shape[0]] = sample["clicks"]
         out["propensity"] = torch.FloatTensor(
             [sample["propensity"] for sample in batch])
         return out
