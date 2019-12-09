@@ -177,8 +177,9 @@ def main(args):
             linear_model.parameters(), args.lr)
     }[args.optimizer]()
 
-    LOGGER.info("Creating result logger")
-    json_logger = JsonLogger("./test.json", indent=1)
+    if args.output is not None:
+        LOGGER.info("Creating result logger")
+        json_logger = JsonLogger(args.output, indent=1)
 
     LOGGER.info("Setup training engine")
     trainer = create_cfltr_trainer(
@@ -199,11 +200,12 @@ def main(args):
             every_n_iteration(trainer, args.eval_every, run_evaluation))
 
         # Write results to file when evaluation finishes.
-        @evaluator.on(Events.COMPLETED)
-        def log_results(evaluator):
-            json_logger.append_all(
-                eval_name, trainer.state.iteration, evaluator.state.metrics)
-            json_logger.write_to_disk()
+        if args.output is not None:
+            @evaluator.on(Events.COMPLETED)
+            def log_results(evaluator):
+                json_logger.append_all(
+                    eval_name, trainer.state.iteration, evaluator.state.metrics)
+                json_logger.write_to_disk()
 
     LOGGER.info("Run train loop")
     trainer.run(train_data_loader, args.epochs)
