@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from tempfile import NamedTemporaryFile
+from time import time
 
 import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset as _load
@@ -68,5 +69,6 @@ class JsonLogger:
 
     def append_all(self, top_level_key, iteration, metrics):
         self.append("%s/iteration" % top_level_key, iteration)
+        self.append("%s/time" % top_level_key, time())
         for metric, value in metrics.items():
             self.append("%s/%s" % (top_level_key, metric), value)
