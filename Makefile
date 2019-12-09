@@ -5,7 +5,7 @@ BUILD := build
 # Default is to run the entire experimental pipeline
 .PHONY: all baselines clicklogs
 all: baselines clicklogs
-baselines: $(BUILD)/baslines/yahoo.pth
+baselines: $(BUILD)/baselines/yahoo.pth
 clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
 
 
