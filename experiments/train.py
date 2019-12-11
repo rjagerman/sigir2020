@@ -4,6 +4,7 @@ import json
 from argparse import ArgumentParser
 
 import torch
+from torchcontrib.optim import SWA
 from ignite.engine import Engine
 from ignite.engine import Events
 from pytorchltr.loss.pairwise import AdditivePairwiseLoss
@@ -41,6 +42,7 @@ def get_parser():
                         choices=["rank", "normrank", "dcg"])
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--enable_cuda", action="store_true", default=False)
+    parser.add_argument("--enable_swa", action="store_true", default=False)
     parser.add_argument("--batch_size", type=int, default=50)
     parser.add_argument("--eval_batch_size", type=int, default=500)
     parser.add_argument("--epochs", type=int, default=50)
@@ -177,6 +179,9 @@ def main(args):
             linear_model.parameters(), args.lr)
     }[args.optimizer]()
 
+    if args.enable_swa:
+        optimizer = SWA(optimizer, swa_start=0, swa_freq=1, swa_lr=args.lr)
+
     if args.output is not None:
         LOGGER.info("Creating result logger")
         json_logger = JsonLogger(args.output, indent=1)
@@ -190,10 +195,18 @@ def main(args):
         metrics = {"ndcg@10": NDCG(k=10), "arp": ARP()}
         evaluator = create_ltr_evaluator(
             linear_model, args.device, metrics)
+        if args.enable_swa:
+            swa_evaluator = create_ltr_evaluator(
+                linear_model, args.device, metrics)
 
         # Run evaluation
         def run_evaluation(trainer):
+            if args.enable_swa:
+                optimizer.swap_swa_sgd()
+                swa_evaluator.run(eval_data_loader)
+                optimizer.swap_swa_sgd()
             evaluator.run(eval_data_loader)
+
         trainer.add_event_handler(Events.STARTED, run_evaluation)
         trainer.add_event_handler(
             Events.ITERATION_COMPLETED,
@@ -201,10 +214,19 @@ def main(args):
 
         # Write results to file when evaluation finishes.
         if args.output is not None:
+            if args.enable_swa:
+                @swa_evaluator.on(Events.COMPLETED)
+                def log_results(evaluator):
+                    json_logger.append_all(
+                        "%s/avgmodel" % eval_name, trainer.state.iteration,
+                        swa_evaluator.state.metrics)
+                    json_logger.write_to_disk()
+
             @evaluator.on(Events.COMPLETED)
             def log_results(evaluator):
                 json_logger.append_all(
-                    eval_name, trainer.state.iteration, evaluator.state.metrics)
+                    "%s/latestmodel" % eval_name, trainer.state.iteration,
+                    evaluator.state.metrics)
                 json_logger.write_to_disk()
 
     LOGGER.info("Run train loop")
