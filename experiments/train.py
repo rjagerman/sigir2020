@@ -42,7 +42,7 @@ def get_parser():
                         choices=["rank", "normrank", "dcg"])
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--enable_cuda", action="store_true", default=False)
-    parser.add_argument("--enable_swa", action="store_true", default=False)
+    parser.add_argument("--disable_swa", action="store_true", default=False)
     parser.add_argument("--batch_size", type=int, default=50)
     parser.add_argument("--eval_batch_size", type=int, default=500)
     parser.add_argument("--epochs", type=int, default=50)
@@ -179,7 +179,7 @@ def main(args):
             linear_model.parameters(), args.lr)
     }[args.optimizer]()
 
-    if args.enable_swa:
+    if not args.disable_swa:
         optimizer = SWA(optimizer, swa_start=0, swa_freq=1, swa_lr=args.lr)
 
     if args.output is not None:
@@ -195,13 +195,13 @@ def main(args):
         metrics = {"ndcg@10": NDCG(k=10), "arp": ARP()}
         evaluator = create_ltr_evaluator(
             linear_model, args.device, metrics)
-        if args.enable_swa:
+        if not args.disable_swa:
             swa_evaluator = create_ltr_evaluator(
                 linear_model, args.device, metrics)
 
         # Run evaluation
         def run_evaluation(trainer):
-            if args.enable_swa:
+            if not args.disable_swa:
                 optimizer.swap_swa_sgd()
                 swa_evaluator.run(eval_data_loader)
                 optimizer.swap_swa_sgd()
@@ -214,7 +214,7 @@ def main(args):
 
         # Write results to file when evaluation finishes.
         if args.output is not None:
-            if args.enable_swa:
+            if not args.disable_swa:
                 @swa_evaluator.on(Events.COMPLETED)
                 def log_results(evaluator):
                     json_logger.append_all(
