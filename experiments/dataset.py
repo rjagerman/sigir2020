@@ -10,8 +10,8 @@ load_ranking_dataset = _Memory(".cache", compress=6).cache(_load)
 
 
 def load_click_dataset(data_file, click_log_file, ips_strategy, ips_clip=None,
-                       batch_size=50, max_list_size=None, normalize=True,
-                       filter_queries=False):
+                       n_clicks=None, batch_size=50, max_list_size=None,
+                       normalize=True, filter_queries=False):
     """Loads a click dataset from file.
 
     Arguments:
@@ -19,6 +19,7 @@ def load_click_dataset(data_file, click_log_file, ips_strategy, ips_clip=None,
         click_log_file: The corresponding click log to load.
         ips_strategy: A string indicating the IPS strategy to use.
         ips_clip: (Optional) whether to apply IPS clipping.
+        n_clicks: (Optional) number of clicks to include (None includes all).
         batch_size: (Optional) the batch size to use (default: 50).
         max_list_size: (Optional) a cut-off for list size padding, default:
             None.
@@ -35,7 +36,8 @@ def load_click_dataset(data_file, click_log_file, ips_strategy, ips_clip=None,
         data_file, normalize=True, filter_queries=filter_queries)
 
     # Load click log from file.
-    click_log = clicklog_dataset(data, click_log_file, clip=ips_clip)
+    click_log = clicklog_dataset(data, click_log_file, clip=ips_clip,
+                                 n_clicks=n_clicks)
 
     # Construct sampling strategy.
     if ips_strategy == "sample":

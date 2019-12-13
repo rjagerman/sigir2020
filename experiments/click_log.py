@@ -9,7 +9,7 @@ from pytorchltr.dataset.svmrank import create_svmranking_collate_fn
 
 class ClicklogDataset(torch.utils.data.Dataset):
     """A click log dataset."""
-    def __init__(self, ranking_dataset, click_log, clip=None):
+    def __init__(self, ranking_dataset, click_log, clip=None, n_clicks=None):
         self._ranking_dataset = ranking_dataset
         self._clicked_docs = click_log["clicked_docs"]
         self._qids = click_log["qids"]
@@ -18,6 +18,10 @@ class ClicklogDataset(torch.utils.data.Dataset):
             self._propensities = np.clip(
                 self._propensities, a_min=clip, a_max=None)
         self._clip = clip
+        if n_clicks is not None:
+            self._clicked_docs = self._clicked_docs[:n_clicks]
+            self._qids = self._qids[:n_clicks]
+            self._propensities = self._propensities[:n_clicks]
 
     @property
     def propensities(self):
@@ -52,7 +56,8 @@ def create_clicklog_collate_fn(rng=np.random.RandomState(42),
     return _collate_fn
 
 
-def clicklog_dataset(ranking_dataset, click_log_file_path, clip=None):
+def clicklog_dataset(ranking_dataset, click_log_file_path, clip=None,
+                     n_clicks=None):
     """Loads a click log dataset from given file path.
 
     Arguments:
@@ -60,10 +65,11 @@ def clicklog_dataset(ranking_dataset, click_log_file_path, clip=None):
             clicks.
         click_log_file_path: Path to the generated click log file.
         clip: Value to clip propensities at (if None, apply no clipping).
+        n_clicks: The number of clicks to limit.
 
     Returns:
         A ClicklogDataset used for ranking experiments.
     """
     with open(click_log_file_path, "rb") as f:
         click_log = pickle.load(f)
-    return ClicklogDataset(ranking_dataset, click_log, clip)
+    return ClicklogDataset(ranking_dataset, click_log, clip, n_clicks)

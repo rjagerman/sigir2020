@@ -45,6 +45,7 @@ def get_parser():
     parser.add_argument("--disable_swa", action="store_true", default=False)
     parser.add_argument("--batch_size", type=int, default=50)
     parser.add_argument("--eval_batch_size", type=int, default=500)
+    parser.add_argument("--n_clicks", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--max_list_size", type=int, default=None)
@@ -145,7 +146,7 @@ def main(args):
     LOGGER.info("Loading click log for training")
     train_data_loader, input_dimensionality = load_click_dataset(
         args.train_data, args.click_log, args.ips_strategy, args.ips_clip,
-        args.batch_size, args.max_list_size)
+        args.n_clicks, args.batch_size, args.max_list_size)
 
     eval_data_loaders = {}
     if args.vali_data is not None:

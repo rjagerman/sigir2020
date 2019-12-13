@@ -31,15 +31,6 @@ $(BUILD)/clicklogs/yahoo_1m_perfect.clog : $(BUILD)/baselines/yahoo.pth | $(BUIL
 		--max_clicks 1_000_000 \
 		--behavior perfect
 
-$(BUILD)/clicklogs/yahoo_100k_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
-	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
-		--ranker $(BUILD)/baselines/yahoo.pth \
-		--output_log $@ \
-		--sessions 10_000_000 \
-		--max_clicks 100_000 \
-		--behavior position \
-		--eta 0.0
-
 $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
@@ -48,15 +39,6 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 0.0
-
-$(BUILD)/clicklogs/yahoo_100k_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
-	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
-		--ranker $(BUILD)/baselines/yahoo.pth \
-		--output_log $@ \
-		--sessions 10_000_000 \
-		--max_clicks 100_000 \
-		--behavior position \
-		--eta 1.0
 
 $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
@@ -67,15 +49,6 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth
 		--behavior position \
 		--eta 1.0
 
-$(BUILD)/clicklogs/yahoo_100k_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
-	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
-		--ranker $(BUILD)/baselines/yahoo.pth \
-		--output_log $@ \
-		--sessions 10_000_000 \
-		--max_clicks 100_000 \
-		--behavior position \
-		--eta 1.5
-
 $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
@@ -84,15 +57,6 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog : $(BUILD)/baselines/yahoo.pth
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 1.5
-
-$(BUILD)/clicklogs/yahoo_100k_position_eta_2.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
-	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
-		--ranker $(BUILD)/baselines/yahoo.pth \
-		--output_log $@ \
-		--sessions 10_000_000 \
-		--max_clicks 100_000 \
-		--behavior position \
-		--eta 2.0
 
 $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
