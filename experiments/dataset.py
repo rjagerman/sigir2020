@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset as _load
 from joblib.memory import Memory as _Memory

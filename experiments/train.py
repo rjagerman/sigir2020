@@ -17,6 +17,7 @@ from experiments.click_log import clicklog_dataset
 from experiments.click_log import create_clicklog_collate_fn
 from experiments.dataset import load_click_dataset
 from experiments.dataset import load_ranking_dataset
+from experiments.models import LinearScorer
 from experiments.util import get_torch_device
 from experiments.util import JsonLogger
 from experiments.util import every_n_iteration
@@ -166,18 +167,17 @@ def main(args):
             collate_fn=create_svmranking_collate_fn())
 
     LOGGER.info("Creating linear model")
-    linear_model = torch.nn.Linear(input_dimensionality, 1)
-    linear_model = linear_model.to(device=args.device)
+    model = LinearScorer(input_dimensionality)
+    model = model.to(device=args.device)
 
     LOGGER.info("Creating loss function")
     loss_fn = create_pairwise_loss(args.objective, args.ips_strategy)
 
     LOGGER.info("Creating optimizer")
     optimizer = {
-        "sgd": lambda: torch.optim.SGD(linear_model.parameters(), args.lr),
-        "adam": lambda: torch.optim.Adam(linear_model.parameters(), args.lr),
-        "adagrad": lambda: torch.optim.Adagrad(
-            linear_model.parameters(), args.lr)
+        "sgd": lambda: torch.optim.SGD(model.parameters(), args.lr),
+        "adam": lambda: torch.optim.Adam(model.parameters(), args.lr),
+        "adagrad": lambda: torch.optim.Adagrad(model.parameters(), args.lr)
     }[args.optimizer]()
 
     if not args.disable_swa:
@@ -189,16 +189,16 @@ def main(args):
 
     LOGGER.info("Setup training engine")
     trainer = create_cfltr_trainer(
-        optimizer, loss_fn, linear_model, args.device)
+        optimizer, loss_fn, model, args.device)
 
     for eval_name, eval_data_loader in eval_data_loaders.items():
         LOGGER.info("Setup %s engine", eval_name)
         metrics = {"ndcg@10": NDCG(k=10), "arp": ARP()}
         evaluator = create_ltr_evaluator(
-            linear_model, args.device, metrics)
+            model, args.device, metrics)
         if not args.disable_swa:
             swa_evaluator = create_ltr_evaluator(
-                linear_model, args.device, metrics)
+                model, args.device, metrics)
 
         # Run evaluation
         def run_evaluation(trainer):
