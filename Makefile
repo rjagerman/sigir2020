@@ -18,6 +18,14 @@ $(BUILD)/baselines/yahoo.pth : | $(BUILD)/baselines/
 		--lr 0.0001 \
 		--fraction 0.001
 
+$(BUILD)/baselines/istella-s.pth : | $(BUILD)/baselines/
+	python -m experiments.baseline --train_data $(ISTELLAS_DIR)/train.txt \
+		--vali_data $(ISTELLAS_DIR)/vali.txt \
+		--output $(BUILD)/baselines/istella-s.pth \
+		--optimizer sgd \
+		--lr 0.0001 \
+		--fraction 0.001
+
 $(BUILD)/baselines/ :
 	mkdir -p $(BUILD)/baselines/
 
