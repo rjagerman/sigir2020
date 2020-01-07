@@ -142,7 +142,7 @@ def main(args):
     """Trains the baseline ranker using given arguments."""
 
     LOGGER.info("Setting device and seeding RNG")
-    args.device = get_torch_device(args.enable_cuda)
+    device = get_torch_device(args.enable_cuda)
     torch.manual_seed(args.seed)
 
     LOGGER.info("Loading click log for training")
@@ -169,10 +169,11 @@ def main(args):
 
     LOGGER.info("Creating linear model")
     model = LinearScorer(input_dimensionality)
-    model = model.to(device=args.device)
+    model = model.to(device=device)
 
     LOGGER.info("Creating loss function (bcf=%f)", bcf)
     loss_fn = create_pairwise_loss(args.objective, args.ips_strategy, bcf)
+    args.bias_correction_factor = bcf
 
     LOGGER.info("Creating optimizer")
     optimizer = {
@@ -190,16 +191,14 @@ def main(args):
 
     LOGGER.info("Setup training engine")
     trainer = create_cfltr_trainer(
-        optimizer, loss_fn, model, args.device)
+        optimizer, loss_fn, model, device)
 
     for eval_name, eval_data_loader in eval_data_loaders.items():
         LOGGER.info("Setup %s engine", eval_name)
         metrics = {"ndcg@10": NDCG(k=10), "arp": ARP()}
-        evaluator = create_ltr_evaluator(
-            model, args.device, metrics)
+        evaluator = create_ltr_evaluator(model, device, metrics)
         if not args.disable_swa:
-            swa_evaluator = create_ltr_evaluator(
-                model, args.device, metrics)
+            swa_evaluator = create_ltr_evaluator(model, device, metrics)
 
         # Run evaluation
         def run_evaluation(trainer):
