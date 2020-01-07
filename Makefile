@@ -4,11 +4,12 @@ ISTELLA_DIR ?= /Users/rolfjagerman/Datasets/istella-s
 BUILD ?= build
 
 # Default is to run the entire experimental pipeline
-.PHONY: all baselines clicklogs
+.PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
 all: baselines clicklogs
 baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
-clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
-clicklogs: $(BUILD)/clicklogs/istella_1m_perfect.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
+yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
+istella_clicklogs: $(BUILD)/clicklogs/istella_1m_perfect.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
+clicklogs: yahoo_clicklogs istella_clicklogs
 
 
 # Baseline rankers trained on fractions of data
@@ -25,7 +26,7 @@ $(BUILD)/baselines/istella.pth : | $(BUILD)/baselines/
 		--vali_data $(ISTELLA_DIR)/vali.txt \
 		--output $(BUILD)/baselines/istella.pth \
 		--optimizer sgd \
-		--lr 0.0001 \
+		--lr 0.001 \
 		--fraction 0.001
 
 $(BUILD)/baselines/ :
