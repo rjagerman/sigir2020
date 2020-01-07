@@ -1,5 +1,6 @@
 # Variables, customize to your environment
 YAHOO_DIR := /Users/rolfjagerman/Datasets/Yahoo/set1
+ISTELLA_DIR := /Users/rolfjagerman/Datasets/istella-s/
 BUILD := build
 
 # Default is to run the entire experimental pipeline
@@ -20,8 +21,8 @@ $(BUILD)/baselines/yahoo.pth : | $(BUILD)/baselines/
 		--fraction 0.001
 
 $(BUILD)/baselines/istella.pth : | $(BUILD)/baselines/
-	python -m experiments.baseline --train_data $(ISTELLAS_DIR)/train.txt \
-		--vali_data $(ISTELLAS_DIR)/vali.txt \
+	python -m experiments.baseline --train_data $(ISTELLA_DIR)/train.txt \
+		--vali_data $(ISTELLA_DIR)/vali.txt \
 		--output $(BUILD)/baselines/istella.pth \
 		--optimizer sgd \
 		--lr 0.0001 \
