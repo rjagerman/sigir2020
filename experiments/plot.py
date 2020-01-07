@@ -21,6 +21,7 @@ def get_parser():
     parser.add_argument("--out", type=FileType("wb"), required=False, default=None)
     parser.add_argument("--dataset", type=str, required=False, default="vali")
     parser.add_argument("--model", type=str, required=False, default="avgmodel")
+    parser.add_argument("--metric", type=str, default="ndcg@10")
     return parser
 
 
@@ -66,19 +67,21 @@ def main(args):
 
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
-                ys = np.array(results[args.dataset][args.model]["arp"])
+                ys = np.array(results[args.dataset][args.model][args.metric])
                 xs = np.array(results[args.dataset][args.model]["iteration"])
                 ax.plot(xs, ys, label=name, color=color(name))
-        #ax.set_ylim([0.68, 0.75])
-        ax.set_ylim([11.0, 12.0])
-        ax.set_ylabel("ndcg@10")
+        if args.metric == "arp":
+            ax.set_ylim([11.0, 12.0])
+        elif args.metric == "ndcg@10":
+            ax.set_ylim([0.68, 0.75])
+        ax.set_ylabel(args.metric)
         ax.set_xlabel("iterations (batch size=100)")
         fig.legend()
 
         print_results = []
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
-                y = results[args.dataset][args.model]["ndcg@10"][-1]
+                y = results[args.dataset][args.model][args.metric][-1]
                 print_results.append((y, name))
         for value, name in sorted(print_results, key=lambda e: e[0]):
             print(f"{name:12s} {value:.4f}")
