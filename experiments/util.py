@@ -65,7 +65,7 @@ class JsonLogger:
             f.flush()
             os.fsync(f)
             f.close()
-            os.replace(f.name, self._output_file)
+            os.rename(f.name, self._output_file)
 
     def append_all(self, top_level_key, iteration, metrics):
         self.append("%s/iteration" % top_level_key, iteration)
