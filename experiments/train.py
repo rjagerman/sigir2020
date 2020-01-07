@@ -55,12 +55,13 @@ def get_parser():
     return parser
 
 
-def create_pairwise_loss(objective, ips_strategy):
+def create_pairwise_loss(objective, ips_strategy, bcf=1.0):
     """Creates a pairwise loss objective
 
     Arguments:
         objective: A string indicating the AdditivePairwiseLoss objective.
         ips_strategy: A string indicating the IPS strategy to use.
+        bcf: Bias correction factor for sample-based learning.
 
     Returns:
         A loss function that takes 4 arguments: (scores, ys, n, p).
@@ -71,7 +72,7 @@ def create_pairwise_loss(objective, ips_strategy):
             return pairwise_loss_fn(scores, ys, n) / p
     else:
         def _loss_fn(scores, ys, n, p):
-            return pairwise_loss_fn(scores, ys, n)
+            return pairwise_loss_fn(scores, ys, n) * bcf
     return _loss_fn
 
 
@@ -145,7 +146,7 @@ def main(args):
     torch.manual_seed(args.seed)
 
     LOGGER.info("Loading click log for training")
-    train_data_loader, input_dimensionality = load_click_dataset(
+    train_data_loader, input_dimensionality, bcf = load_click_dataset(
         args.train_data, args.click_log, args.ips_strategy, args.ips_clip,
         args.n_clicks, args.batch_size, args.max_list_size)
 
@@ -170,8 +171,8 @@ def main(args):
     model = LinearScorer(input_dimensionality)
     model = model.to(device=args.device)
 
-    LOGGER.info("Creating loss function")
-    loss_fn = create_pairwise_loss(args.objective, args.ips_strategy)
+    LOGGER.info("Creating loss function (bcf=%f)", bcf)
+    loss_fn = create_pairwise_loss(args.objective, args.ips_strategy, bcf)
 
     LOGGER.info("Creating optimizer")
     optimizer = {
@@ -203,9 +204,12 @@ def main(args):
         # Run evaluation
         def run_evaluation(trainer):
             if not args.disable_swa:
-                optimizer.swap_swa_sgd()
+                optim_state = optimizer.state_dict()
+                if "swa_state" in optim_state and len(optim_state["swa_state"]) > 0:
+                    optimizer.swap_swa_sgd()
                 swa_evaluator.run(eval_data_loader)
-                optimizer.swap_swa_sgd()
+                if "swa_state" in optim_state and len(optim_state["swa_state"]) > 0:
+                    optimizer.swap_swa_sgd()
             evaluator.run(eval_data_loader)
 
         trainer.add_event_handler(Events.STARTED, run_evaluation)

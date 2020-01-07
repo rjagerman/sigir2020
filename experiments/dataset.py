@@ -44,14 +44,17 @@ def load_click_dataset(data_file, click_log_file, ips_strategy, ips_clip=None,
     if ips_strategy == "sample":
         propensities = torch.FloatTensor(click_log.propensities)
         weights = (1.0 / propensities)
+        bias_correction_factor = float(torch.mean(weights))
         probabilities = weights / torch.sum(weights)
         sampler = torch.utils.data.sampler.WeightedRandomSampler(
             probabilities, len(click_log))
     else:
+        bias_correction_factor = 1.0
         sampler = torch.utils.data.sampler.RandomSampler(click_log)
 
     # Return a data loader.
     return (torch.utils.data.DataLoader(
         click_log, batch_size=batch_size, sampler=sampler,
         collate_fn=create_clicklog_collate_fn(max_list_size=max_list_size)),
-        data[0]["features"].shape[1])
+        data[0]["features"].shape[1],
+        bias_correction_factor)
