@@ -185,7 +185,7 @@ def main(args):
 
     if args.output is not None:
         LOGGER.info("Creating result logger")
-        json_logger = JsonLogger(args.output, indent=1)
+        json_logger = JsonLogger(args.output, indent=1, args=args)
 
     LOGGER.info("Setup training engine")
     trainer = create_cfltr_trainer(

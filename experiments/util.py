@@ -40,10 +40,12 @@ def every_n_iteration(engine, n, callback):
 
 
 class JsonLogger:
-    def __init__(self, output_file, indent=None):
+    def __init__(self, output_file, indent=None, args=None):
         self._output_file = output_file
         self._output = {}
         self._indent = indent
+        if args is not None:
+            self._output["args"] = vars(args)
 
     def append(self, key, value):
         next_dict = self._output
