@@ -5,8 +5,9 @@ BUILD := build
 # Default is to run the entire experimental pipeline
 .PHONY: all baselines clicklogs
 all: baselines clicklogs
-baselines: $(BUILD)/baselines/yahoo.pth
+baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
 clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
+clicklogs: $(BUILD)/clicklogs/istella_1m_perfect.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
 
 
 # Baseline rankers trained on fractions of data
@@ -18,10 +19,10 @@ $(BUILD)/baselines/yahoo.pth : | $(BUILD)/baselines/
 		--lr 0.0001 \
 		--fraction 0.001
 
-$(BUILD)/baselines/istella-s.pth : | $(BUILD)/baselines/
+$(BUILD)/baselines/istella.pth : | $(BUILD)/baselines/
 	python -m experiments.baseline --train_data $(ISTELLAS_DIR)/train.txt \
 		--vali_data $(ISTELLAS_DIR)/vali.txt \
-		--output $(BUILD)/baselines/istella-s.pth \
+		--output $(BUILD)/baselines/istella.pth \
 		--optimizer sgd \
 		--lr 0.0001 \
 		--fraction 0.001
@@ -83,6 +84,63 @@ $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog : $(BUILD)/baselines/yahoo.p
 		--max_clicks 1_000_000 \
 		--behavior nearrandom \
 		--eta 1.0
+
+
+
+$(BUILD)/clicklogs/istella_1m_perfect.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior perfect
+
+$(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 0.0
+
+$(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 1.0
+
+$(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 1.5
+
+$(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 2.0
+
+$(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior nearrandom \
+		--eta 1.0
+
+
 
 $(BUILD)/clicklogs/ :
 	mkdir -p $(BUILD)/clicklogs/
