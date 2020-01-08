@@ -89,7 +89,7 @@ class JsonLogger:
                 LOGGER.error("Exception when writing JSON log: %s", e)
                 raise e
         if not success and last_error is not None:
-            LOGGER.error("IOError when writing JSOn log (exhausted %d attempts): %s", self._nr_of_tries, last_error)
+            LOGGER.error("IOError when writing JSON log (exhausted %d attempts): %s", self._nr_of_tries, last_error)
             raise last_error
 
     def append_all(self, top_level_key, iteration, metrics):
