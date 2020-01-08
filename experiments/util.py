@@ -1,8 +1,10 @@
 import json
 import logging
 import os
+import shutil
 from tempfile import NamedTemporaryFile
 from time import time
+from time import sleep
 
 import torch
 from pytorchltr.dataset.svmrank import svmranking_dataset as _load
@@ -40,12 +42,14 @@ def every_n_iteration(engine, n, callback):
 
 
 class JsonLogger:
-    def __init__(self, output_file, indent=None, args=None):
+    def __init__(self, output_file, indent=None, args=None, nr_of_tries=3, timeout=10.0):
         self._output_file = output_file
         self._output = {}
         self._indent = indent
         if args is not None:
             self._output["args"] = vars(args)
+        self._nr_of_tries = nr_of_tries
+        self._timeout = timeout
 
     def append(self, key, value):
         next_dict = self._output
@@ -59,15 +63,34 @@ class JsonLogger:
         next_dict[keys[-1]].append(value)
 
     def write_to_disk(self):
-        # Performs an atomic write to file.
-        dirpath, filename = os.path.split(self._output_file)
-        with NamedTemporaryFile(dir=dirpath, prefix=filename, mode='wt',
-                                suffix='.tmp', delete=False) as f:
-            json.dump(self._output, f, indent=self._indent)
-            f.flush()
-            os.fsync(f)
-            f.close()
-            os.rename(f.name, self._output_file)
+        success = False
+        tries = 0
+        last_error = None
+        while tries < self._nr_of_tries and not success:
+            tries += 1
+            try:
+                # Performs an atomic write to file.
+                dirpath, filename = os.path.split(self._output_file)
+                tempname = ""
+                with NamedTemporaryFile(dir=dirpath, prefix=filename, mode='wt',
+                                        suffix='.tmp', delete=False) as f:
+                    json.dump(self._output, f, indent=self._indent)
+                    f.flush()
+                    os.fsync(f)
+                    f.close()
+                shutil.move(f.name, self._output_file)
+                success = True
+            except IOError as e:
+                LOGGER.warn("IOError when writing JSON log: %s", e)
+                LOGGER.warn("Retrying attempt %d/%d in %d seconds", tries, self._nr_of_tries, self._timeout)
+                last_error = e
+                sleep(self._timeout)
+            except Exception as e:
+                LOGGER.error("Exception when writing JSON log: %s", e)
+                raise e
+        if not success and last_error is not None:
+            LOGGER.error("IOError when writing JSOn log (exhausted %d attempts): %s", self._nr_of_tries, last_error)
+            raise last_error
 
     def append_all(self, top_level_key, iteration, metrics):
         self.append("%s/iteration" % top_level_key, iteration)
