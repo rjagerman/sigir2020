@@ -50,8 +50,8 @@ def get_parser():
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--max_list_size", type=int, default=None)
-    parser.add_argument("--log_every", type=int, default=1000)
-    parser.add_argument("--eval_every", type=int, default=1000)
+    parser.add_argument("--log_every", type=int, default=None)
+    parser.add_argument("--eval_every", type=int, default=None)
     return parser
 
 
@@ -144,6 +144,15 @@ def main(args):
     LOGGER.info("Setting device and seeding RNG")
     device = get_torch_device(args.enable_cuda)
     torch.manual_seed(args.seed)
+
+    LOGGER.info("Setting evaluation and logging frequency")
+    if args.eval_every is None and args.log_every is None:
+        args.eval_every = 10_000 // args.batch_size
+        args.log_every = 10_000 // args.batch_size
+    elif args.eval_every is None:
+        args.eval_every = args.log_every
+    elif args.log_every is None:
+        args.log_every = args.eval_every
 
     LOGGER.info("Loading click log for training")
     train_data_loader, input_dimensionality, bcf = load_click_dataset(
