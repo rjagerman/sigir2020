@@ -1,6 +1,7 @@
 import logging
 import json
 import os
+from copy import deepcopy
 from time import sleep
 from argparse import ArgumentParser
 from argparse import FileType
@@ -22,6 +23,8 @@ def get_parser():
     parser.add_argument("--dataset", type=str, required=False, default="vali")
     parser.add_argument("--model", type=str, required=False, default="avgmodel")
     parser.add_argument("--metric", type=str, default="ndcg@10")
+    parser.add_argument("--select_best_lr", action="store_true", default=False)
+    parser.add_argument("--seed_error_bars", action="store_true", default=False)
     return parser
 
 
@@ -47,6 +50,14 @@ def color_by_optimizer(name):
         return None
 
 
+def compress_list_of_arrays(list_of_arrays):
+    min_shape = np.min([np.array(a).shape for a in list_of_arrays])
+    mean = np.mean([a[:min_shape] for a in list_of_arrays], axis=0)
+    std = np.std([a[:min_shape] for a in list_of_arrays], axis=0)
+    n = len(list_of_arrays)
+    return mean, std, n
+
+
 def main(args):
 
     fig = plt.figure()
@@ -65,26 +76,92 @@ def main(args):
             "none": lambda x: None
         }[args.color_by]
 
+        # Print all loaded results
+        print_results = []
+        max_last_y = 0.0
+        for name, results in data.items():
+            if args.dataset in results and args.model in results[args.dataset]:
+                y = results[args.dataset][args.model][args.metric][-1]
+                max_last_y = max(y, max_last_y)
+                print_results.append((y, name))
+        for value, name in sorted(print_results, key=lambda e: e[0]):
+            print(f"{name:12s} {value:.4f}")
+
+        # Select only best LR per setting
+        if args.select_best_lr:
+            print("============== selecting only best LR ============")
+            best = {}
+            for name, results in data.items():
+                if args.dataset in results and args.model in results[args.dataset]:
+                    y = results[args.dataset][args.model][args.metric][-1]
+                    a = deepcopy(results['args'])
+                    del a["lr"]
+                    del a["output"]
+                    key = tuple(sorted(a.items()))
+                    if key not in best or best[key]['y'] < y:
+                        best[key] = {}
+                        best[key]['y'] = y
+                        best[key]['name'] = name
+                        best[key]['results'] = results
+            data = {v['name']: v['results'] for v in best.values()}
+            print_results = []
+            for name, results in data.items():
+                if args.dataset in results and args.model in results[args.dataset]:
+                    y = results[args.dataset][args.model][args.metric][-1]
+                    print_results.append((y, name))
+            for value, name in sorted(print_results, key=lambda e: e[0]):
+                print(f"{name:12s} {value:.4f}")
+
+        # Compute error bars for identical runs with multiple seeds
+        if args.seed_error_bars:
+            avg_runs = {}
+            for name, results in data.items():
+                if args.dataset in results and args.model in results[args.dataset]:
+                    x = results[args.dataset][args.model]["iteration"]
+                    y = results[args.dataset][args.model][args.metric]
+                    a = deepcopy(results['args'])
+                    del a["seed"]
+                    del a["output"]
+                    key = tuple(sorted(a.items()))
+                    if key not in avg_runs:
+                        avg_runs[key] = {
+                            'name': name,
+                            'results': {args.dataset: {args.model: {args.metric: [], "iteration": []}}}
+                        }
+                    avg_runs[key]['results'][args.dataset][args.model][args.metric].append(y)
+                    avg_runs[key]['results'][args.dataset][args.model]["iteration"].append(x)
+                    avg_runs[key]['args'] = results['args']
+            data = {}
+            for run in avg_runs.values():
+                ys_mean, ys_std, ys_n = compress_list_of_arrays(run['results'][args.dataset][args.model][args.metric])
+                xs_mean, _, _  = compress_list_of_arrays(run['results'][args.dataset][args.model]["iteration"])
+                data[run['name']] = {
+                    args.dataset: {args.model: {
+                        args.metric: ys_mean,
+                        f"{args.metric}/std": ys_std,
+                        f"{args.metric}/n": ys_n,
+                        "iteration": xs_mean
+                    }},
+                    "args": run['args']
+                }
+
+        # Plot actual results
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
                 ys = np.array(results[args.dataset][args.model][args.metric])
                 xs = np.array(results[args.dataset][args.model]["iteration"])
+                xs = xs * int(results['args']['batch_size'])
                 ax.plot(xs, ys, label=name, color=color(name))
+                if f"{args.metric}/std" in results[args.dataset][args.model]:
+                    ys_std = np.array(results[args.dataset][args.model][f"{args.metric}/std"])
+                    ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
         if args.metric == "arp":
             ax.set_ylim([11.0, 12.0])
         elif args.metric == "ndcg@10":
-            ax.set_ylim([0.68, 0.75])
+            ax.set_ylim([0.94 * max_last_y, 1.02 * max_last_y])
         ax.set_ylabel(args.metric)
-        ax.set_xlabel("iterations (batch size=100)")
+        ax.set_xlabel("nr samples")
         fig.legend()
-
-        print_results = []
-        for name, results in data.items():
-            if args.dataset in results and args.model in results[args.dataset]:
-                y = results[args.dataset][args.model][args.metric][-1]
-                print_results.append((y, name))
-        for value, name in sorted(print_results, key=lambda e: e[0]):
-            print(f"{name:12s} {value:.4f}")
 
     plot_data(args, fig)
 
