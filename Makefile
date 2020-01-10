@@ -142,7 +142,21 @@ $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog : $(BUILD)/baselines/istel
 		--behavior nearrandom \
 		--eta 1.0
 
-
-
 $(BUILD)/clicklogs/ :
 	mkdir -p $(BUILD)/clicklogs/
+
+
+# Results
+include makescripts/yahoo_optimizers.mk
+include makescripts/yahoo_batch_sizes.mk
+include makescripts/istella_optimizers.mk
+include makescripts/istella_batch_sizes.mk
+
+$(BUILD)/results/optimizers/ :
+	mkdir -p $(BUILD)/results/optimizers/
+
+$(BUILD)/results/batch_sizes/ :
+	mkdir -p $(BUILD)/results/batch_sizes/
+
+$(BUILD)/results/etas/ :
+	mkdir -p $(BUILD)/results/etas/
