@@ -78,11 +78,14 @@ def main(args):
 
         # Print all loaded results
         print_results = []
-        max_last_y = 0.0
+        max_last_y = 1e30 if args.metric == "arp" else 0.0
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
                 y = results[args.dataset][args.model][args.metric][-1]
-                max_last_y = max(y, max_last_y)
+                if args.metric == "arp":
+                    max_last_y = min(y, max_last_y)
+                else:
+                    max_last_y = max(y, max_last_y)
                 print_results.append((y, name))
         for value, name in sorted(print_results, key=lambda e: e[0]):
             print(f"{name:12s} {value:.4f}")
@@ -94,6 +97,8 @@ def main(args):
             for name, results in data.items():
                 if args.dataset in results and args.model in results[args.dataset]:
                     y = results[args.dataset][args.model][args.metric][-1]
+                    if args.metric == "arp":
+                        y = -y
                     a = deepcopy(results['args'])
                     del a["lr"]
                     del a["output"]
@@ -156,7 +161,7 @@ def main(args):
                     ys_std = np.array(results[args.dataset][args.model][f"{args.metric}/std"])
                     ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
         if args.metric == "arp":
-            ax.set_ylim([11.0, 12.0])
+            ax.set_ylim([0.98 * max_last_y, 1.06 * max_last_y])
         elif args.metric == "ndcg@10":
             ax.set_ylim([0.94 * max_last_y, 1.02 * max_last_y])
         ax.set_ylabel(args.metric)
