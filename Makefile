@@ -219,8 +219,10 @@ $(BUILD)/clicklogs/ :
 # Results
 include makescripts/yahoo_optimizers.mk
 include makescripts/yahoo_batch_sizes.mk
+include makescripts/yahoo_etas.mk
 include makescripts/istella_optimizers.mk
 include makescripts/istella_batch_sizes.mk
+include makescripts/istella_etas.mk
 
 $(BUILD)/results/optimizers/ :
 	mkdir -p $(BUILD)/results/optimizers/
