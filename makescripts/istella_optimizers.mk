@@ -16,7 +16,7 @@ $(BUILD)/results/optimizers/istella_sgd_none_seed_%.json : istella_clicklogs | $
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-04 \
 		--optimizer sgd \
 		--ips_strategy none \
@@ -25,13 +25,14 @@ $(BUILD)/results/optimizers/istella_sgd_none_seed_%.json : istella_clicklogs | $
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_sgd_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-07 \
 		--optimizer sgd \
 		--ips_strategy weight \
@@ -40,13 +41,14 @@ $(BUILD)/results/optimizers/istella_sgd_weight_seed_%.json : istella_clicklogs |
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_sgd_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-06 \
 		--optimizer sgd \
 		--ips_strategy sample \
@@ -55,6 +57,7 @@ $(BUILD)/results/optimizers/istella_sgd_sample_seed_%.json : istella_clicklogs |
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # Adam
 $(BUILD)/results/optimizers/istella_adam_none_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
@@ -62,7 +65,7 @@ $(BUILD)/results/optimizers/istella_adam_none_seed_%.json : istella_clicklogs | 
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-04 \
 		--optimizer adam \
 		--ips_strategy none \
@@ -71,13 +74,14 @@ $(BUILD)/results/optimizers/istella_adam_none_seed_%.json : istella_clicklogs | 
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_adam_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-04 \
 		--optimizer adam \
 		--ips_strategy weight \
@@ -86,13 +90,14 @@ $(BUILD)/results/optimizers/istella_adam_weight_seed_%.json : istella_clicklogs 
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_adam_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-04 \
 		--optimizer adam \
 		--ips_strategy sample \
@@ -101,6 +106,7 @@ $(BUILD)/results/optimizers/istella_adam_sample_seed_%.json : istella_clicklogs 
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # Adagrad
 $(BUILD)/results/optimizers/istella_adagrad_none_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
@@ -108,7 +114,7 @@ $(BUILD)/results/optimizers/istella_adagrad_none_seed_%.json : istella_clicklogs
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-01 \
 		--optimizer adagrad \
 		--ips_strategy none \
@@ -117,13 +123,14 @@ $(BUILD)/results/optimizers/istella_adagrad_none_seed_%.json : istella_clicklogs
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_adagrad_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-01 \
 		--optimizer adagrad \
 		--ips_strategy weight \
@@ -132,13 +139,14 @@ $(BUILD)/results/optimizers/istella_adagrad_weight_seed_%.json : istella_clicklo
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/istella_adagrad_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-01 \
 		--optimizer adagrad \
 		--ips_strategy sample \
@@ -147,3 +155,4 @@ $(BUILD)/results/optimizers/istella_adagrad_sample_seed_%.json : istella_clicklo
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@

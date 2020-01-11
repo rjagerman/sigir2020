@@ -16,7 +16,7 @@ $(BUILD)/results/batch_sizes/yahoo_10_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e+00 \
 		--optimizer sgd \
 		--ips_strategy none \
@@ -25,13 +25,14 @@ $(BUILD)/results/batch_sizes/yahoo_10_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--eval_every 1000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_10_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy weight \
@@ -40,13 +41,14 @@ $(BUILD)/results/batch_sizes/yahoo_10_weight_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 1000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_10_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-03 \
 		--optimizer sgd \
 		--ips_strategy sample \
@@ -55,6 +57,7 @@ $(BUILD)/results/batch_sizes/yahoo_10_sample_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 1000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # batch 20
 $(BUILD)/results/batch_sizes/yahoo_20_none_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
@@ -62,7 +65,7 @@ $(BUILD)/results/batch_sizes/yahoo_20_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e+00 \
 		--optimizer sgd \
 		--ips_strategy none \
@@ -71,13 +74,14 @@ $(BUILD)/results/batch_sizes/yahoo_20_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--eval_every 500 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_20_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-04 \
 		--optimizer sgd \
 		--ips_strategy weight \
@@ -86,13 +90,14 @@ $(BUILD)/results/batch_sizes/yahoo_20_weight_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 500 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_20_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-03 \
 		--optimizer sgd \
 		--ips_strategy sample \
@@ -101,6 +106,7 @@ $(BUILD)/results/batch_sizes/yahoo_20_sample_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 500 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # batch 50
 $(BUILD)/results/batch_sizes/yahoo_50_none_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
@@ -108,7 +114,7 @@ $(BUILD)/results/batch_sizes/yahoo_50_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e+00 \
 		--optimizer sgd \
 		--ips_strategy none \
@@ -117,13 +123,14 @@ $(BUILD)/results/batch_sizes/yahoo_50_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--eval_every 200 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_50_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-04 \
 		--optimizer sgd \
 		--ips_strategy weight \
@@ -132,13 +139,14 @@ $(BUILD)/results/batch_sizes/yahoo_50_weight_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 200 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/batch_sizes/yahoo_50_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-03 \
 		--optimizer sgd \
 		--ips_strategy sample \
@@ -147,3 +155,4 @@ $(BUILD)/results/batch_sizes/yahoo_50_sample_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 200 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@

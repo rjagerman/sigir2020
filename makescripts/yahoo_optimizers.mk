@@ -16,7 +16,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-02 \
 		--optimizer sgd \
 		--ips_strategy none \
@@ -25,13 +25,14 @@ $(BUILD)/results/optimizers/yahoo_sgd_none_seed_%.json : yahoo_clicklogs | $(BUI
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-06 \
 		--optimizer sgd \
 		--ips_strategy weight \
@@ -40,13 +41,14 @@ $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_sgd_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy sample \
@@ -55,6 +57,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_sample_seed_%.json : yahoo_clicklogs | $(B
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # Adam
 $(BUILD)/results/optimizers/yahoo_adam_none_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
@@ -62,7 +65,7 @@ $(BUILD)/results/optimizers/yahoo_adam_none_seed_%.json : yahoo_clicklogs | $(BU
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-02 \
 		--optimizer adam \
 		--ips_strategy none \
@@ -71,13 +74,14 @@ $(BUILD)/results/optimizers/yahoo_adam_none_seed_%.json : yahoo_clicklogs | $(BU
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adam_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-05 \
 		--optimizer adam \
 		--ips_strategy weight \
@@ -86,13 +90,14 @@ $(BUILD)/results/optimizers/yahoo_adam_weight_seed_%.json : yahoo_clicklogs | $(
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adam_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e-02 \
 		--optimizer adam \
 		--ips_strategy sample \
@@ -101,6 +106,7 @@ $(BUILD)/results/optimizers/yahoo_adam_sample_seed_%.json : yahoo_clicklogs | $(
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 # Adagrad
 $(BUILD)/results/optimizers/yahoo_adagrad_none_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
@@ -108,7 +114,7 @@ $(BUILD)/results/optimizers/yahoo_adagrad_none_seed_%.json : yahoo_clicklogs | $
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e+00 \
 		--optimizer adagrad \
 		--ips_strategy none \
@@ -117,13 +123,14 @@ $(BUILD)/results/optimizers/yahoo_adagrad_none_seed_%.json : yahoo_clicklogs | $
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 3e-01 \
 		--optimizer adagrad \
 		--ips_strategy weight \
@@ -132,13 +139,14 @@ $(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_%.json : yahoo_clicklogs |
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_%.json : yahoo_clicklogs | $(BUILD)/results/optimizers/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog \
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
-		--output $@ \
+		--output $@.tmp \
 		--lr 1e+00 \
 		--optimizer adagrad \
 		--ips_strategy sample \
@@ -147,3 +155,4 @@ $(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_%.json : yahoo_clicklogs |
 		--eval_every 10_000 \
 		--epochs 5 \
 		--seed $*
+	mv $@.tmp $@
