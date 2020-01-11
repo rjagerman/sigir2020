@@ -170,7 +170,7 @@ def main(args):
 
     if args.test_data is not None:
         LOGGER.info("Loading test data")
-        eval_data_loaders["vali"] = torch.utils.data.DataLoader(
+        eval_data_loaders["test"] = torch.utils.data.DataLoader(
             load_ranking_dataset(args.test_data, normalize=True,
                                  filter_queries=True),
             shuffle=False, batch_size=args.eval_batch_size,
