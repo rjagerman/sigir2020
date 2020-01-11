@@ -7,8 +7,8 @@ BUILD ?= build
 .PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
 all: baselines clicklogs
 baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
-yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
-istella_clicklogs: $(BUILD)/clicklogs/istella_1m_perfect.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
+yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_0.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog $(BUILD)/clicklogs/yahoo_1m_position_eta_2.0.clog $(BUILD)/clicklogs/yahoo_1m_nearrandom_eta_1.0.clog
+istella_clicklogs: $(BUILD)/clicklogs/istella_1m_perfect.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
 clicklogs: yahoo_clicklogs istella_clicklogs
 
 
