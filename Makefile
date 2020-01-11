@@ -51,6 +51,15 @@ $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog : $(BUILD)/baselines/yahoo.pth
 		--behavior position \
 		--eta 0.0
 
+$(BUILD)/clicklogs/yahoo_1m_position_eta_0.5.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/yahoo.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 0.5
+
 $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog : $(BUILD)/baselines/yahoo.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(YAHOO_DIR)/train.txt \
 		--ranker $(BUILD)/baselines/yahoo.pth \
@@ -105,6 +114,15 @@ $(BUILD)/clicklogs/istella_1m_position_eta_0.0.clog : $(BUILD)/baselines/istella
 		--max_clicks 1_000_000 \
 		--behavior position \
 		--eta 0.0
+
+$(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
+	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
+		--ranker $(BUILD)/baselines/istella.pth \
+		--output_log $@ \
+		--sessions 10_000_000 \
+		--max_clicks 1_000_000 \
+		--behavior position \
+		--eta 0.5
 
 $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog : $(BUILD)/baselines/istella.pth | $(BUILD)/clicklogs/
 	python -m experiments.simulate_clicks --input_data $(ISTELLA_DIR)/train.txt \
