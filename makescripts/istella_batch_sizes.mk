@@ -11,7 +11,7 @@ istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes
 .PHONY: istella_batch_sizes_repeat_5
 
 # batch 10
-$(BUILD)/results/batch_sizes/istella_10_none_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_10_none_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -26,7 +26,7 @@ $(BUILD)/results/batch_sizes/istella_10_none_seed_%.json : $(BUILD)/results/batc
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_10_weight_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_10_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -41,7 +41,7 @@ $(BUILD)/results/batch_sizes/istella_10_weight_seed_%.json : $(BUILD)/results/ba
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_10_sample_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_10_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -57,7 +57,7 @@ $(BUILD)/results/batch_sizes/istella_10_sample_seed_%.json : $(BUILD)/results/ba
 		--seed $*
 
 # batch 20
-$(BUILD)/results/batch_sizes/istella_20_none_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_20_none_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -72,7 +72,7 @@ $(BUILD)/results/batch_sizes/istella_20_none_seed_%.json : $(BUILD)/results/batc
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_20_weight_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_20_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -87,7 +87,7 @@ $(BUILD)/results/batch_sizes/istella_20_weight_seed_%.json : $(BUILD)/results/ba
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_20_sample_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_20_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -103,7 +103,7 @@ $(BUILD)/results/batch_sizes/istella_20_sample_seed_%.json : $(BUILD)/results/ba
 		--seed $*
 
 # batch 50
-$(BUILD)/results/batch_sizes/istella_50_none_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_50_none_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -118,7 +118,7 @@ $(BUILD)/results/batch_sizes/istella_50_none_seed_%.json : $(BUILD)/results/batc
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_50_weight_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_50_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -133,7 +133,7 @@ $(BUILD)/results/batch_sizes/istella_50_weight_seed_%.json : $(BUILD)/results/ba
 		--epochs 5 \
 		--seed $*
 
-$(BUILD)/results/batch_sizes/istella_50_sample_seed_%.json : $(BUILD)/results/batch_sizes/ istella_clicklogs
+$(BUILD)/results/batch_sizes/istella_50_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.0.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
