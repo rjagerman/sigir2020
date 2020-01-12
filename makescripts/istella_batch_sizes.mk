@@ -132,7 +132,7 @@ $(BUILD)/results/batch_sizes/istella_50_weight_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-04=5 \
+		--lr 3e-04 \
 		--optimizer sgd \
 		--ips_strategy weight \
 		--batch_size 50 \
