@@ -1,14 +1,15 @@
 # Results for batch sizes experiment under istella dataset.
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_none_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_weight_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_sample_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_none_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_weight_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_sample_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_none_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_weight_seed_420$(i).json)
-istella_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_sample_seed_420$(i).json)
-.PHONY: istella_batch_sizes_repeat_5
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_none_seed_420$(i).json)
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_weight_seed_420$(i).json)
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_sample_seed_420$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_none_seed_420$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_weight_seed_420$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_sample_seed_420$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_none_seed_420$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_weight_seed_420$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_sample_seed_420$(i).json)
+istella_batch_sizes_repeat_5: istella_batch_sizes_10_repeat_5 istella_batch_sizes_20_repeat_5 istella_batch_sizes_50_repeat_5
+.PHONY: istella_batch_sizes_repeat_5 istella_batch_sizes_10_repeat_5 istella_batch_sizes_20_repeat_5 istella_batch_sizes_50_repeat_5
 
 # batch 10
 $(BUILD)/results/batch_sizes/istella_10_none_seed_%.json : istella_clicklogs | $(BUILD)/results/batch_sizes/
