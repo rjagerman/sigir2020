@@ -30,7 +30,7 @@ $(BUILD)/results/etas/istella_1.0_sample_seed_%.json : $(BUILD)/results/optimize
 	cp $(BUILD)/results/optimizers/istella_sgd_sample_seed_$*.json $@
 
 # Eta 0.5
-$(BUILD)/results/etas/istella_0.5_none_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.5_none_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -46,7 +46,7 @@ $(BUILD)/results/etas/istella_0.5_none_seed_%.json : istella_clicklogs | $(BUILD
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_0.5_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.5_sample_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -62,7 +62,7 @@ $(BUILD)/results/etas/istella_0.5_sample_seed_%.json : istella_clicklogs | $(BUI
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_0.5_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.5_weight_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -79,7 +79,7 @@ $(BUILD)/results/etas/istella_0.5_weight_seed_%.json : istella_clicklogs | $(BUI
 	mv $@.tmp $@
 
 # Eta 0.75
-$(BUILD)/results/etas/istella_0.75_none_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.75_none_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -95,7 +95,7 @@ $(BUILD)/results/etas/istella_0.75_none_seed_%.json : istella_clicklogs | $(BUIL
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_0.75_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.75_sample_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -111,7 +111,7 @@ $(BUILD)/results/etas/istella_0.75_sample_seed_%.json : istella_clicklogs | $(BU
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_0.75_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_0.75_weight_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_0.75.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -129,7 +129,7 @@ $(BUILD)/results/etas/istella_0.75_weight_seed_%.json : istella_clicklogs | $(BU
 
 
 # Eta 1.25
-$(BUILD)/results/etas/istella_1.25_none_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.25_none_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -145,7 +145,7 @@ $(BUILD)/results/etas/istella_1.25_none_seed_%.json : istella_clicklogs | $(BUIL
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_1.25_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.25_sample_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -161,7 +161,7 @@ $(BUILD)/results/etas/istella_1.25_sample_seed_%.json : istella_clicklogs | $(BU
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_1.25_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.25_weight_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.25.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -179,7 +179,7 @@ $(BUILD)/results/etas/istella_1.25_weight_seed_%.json : istella_clicklogs | $(BU
 
 
 # Eta 1.5
-$(BUILD)/results/etas/istella_1.5_none_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.5_none_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -195,7 +195,7 @@ $(BUILD)/results/etas/istella_1.5_none_seed_%.json : istella_clicklogs | $(BUILD
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_1.5_sample_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.5_sample_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
@@ -211,7 +211,7 @@ $(BUILD)/results/etas/istella_1.5_sample_seed_%.json : istella_clicklogs | $(BUI
 		--seed $*
 	mv $@.tmp $@
 
-$(BUILD)/results/etas/istella_1.5_weight_seed_%.json : istella_clicklogs | $(BUILD)/results/etas/
+$(BUILD)/results/etas/istella_1.5_weight_seed_%.json : $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog | $(BUILD)/results/etas/
 	python -m experiments.train \
 		--click_log $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog \
 		--train_data $(ISTELLA_DIR)/train.txt \
