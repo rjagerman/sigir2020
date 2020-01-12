@@ -1,14 +1,15 @@
 # Results for batch sizes experiment under yahoo dataset.
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_none_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_weight_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_sample_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_none_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_weight_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_sample_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_none_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_weight_seed_420$(i).json)
-yahoo_batch_sizes_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_sample_seed_420$(i).json)
-.PHONY: yahoo_batch_sizes_repeat_5
+yahoo_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_none_seed_420$(i).json)
+yahoo_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_weight_seed_420$(i).json)
+yahoo_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_10_sample_seed_420$(i).json)
+yahoo_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_none_seed_420$(i).json)
+yahoo_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_weight_seed_420$(i).json)
+yahoo_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_20_sample_seed_420$(i).json)
+yahoo_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_none_seed_420$(i).json)
+yahoo_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_weight_seed_420$(i).json)
+yahoo_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/yahoo_50_sample_seed_420$(i).json)
+yahoo_batch_sizes_repeat_5 : yahoo_batch_sizes_10_repeat_5 yahoo_batch_sizes_20_repeat_5 yahoo_batch_sizes_50_repeat_5
+.PHONY: yahoo_batch_sizes_repeat_5 yahoo_batch_sizes_10_repeat_5 yahoo_batch_sizes_20_repeat_5 yahoo_batch_sizes_50_repeat_5
 
 # batch 10
 $(BUILD)/results/batch_sizes/yahoo_10_none_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/batch_sizes/
