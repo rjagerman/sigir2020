@@ -18,7 +18,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_none_seed_%.json : $(BUILD)/clicklogs/yaho
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-02 \
+		--lr 3e-01 \
 		--optimizer sgd \
 		--ips_strategy none \
 		--batch_size 1 \
@@ -34,7 +34,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : $(BUILD)/clicklogs/ya
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-06 \
+		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy weight \
 		--batch_size 1 \
@@ -50,7 +50,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_sample_seed_%.json : $(BUILD)/clicklogs/ya
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-05 \
+		--lr 1e-04 \
 		--optimizer sgd \
 		--ips_strategy sample \
 		--batch_size 1 \
