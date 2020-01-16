@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib
-#matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}\n\\usepackage[libertine]{newtxmath}' #\\usepackage{libertine}\n
-#matplotlib.rcParams['text.usetex'] = True
-#matplotlib.rcParams.update({'font.size': 14})
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}\n\\usepackage[libertine]{newtxmath}' #\\usepackage{libertine}\n
+matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams.update({'font.size': 14})
 import torch
 from torchcontrib.optim import SWA
 from matplotlib import pyplot as plt
