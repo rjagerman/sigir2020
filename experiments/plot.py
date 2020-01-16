@@ -17,7 +17,7 @@ def get_parser():
     """Gets the parser to create arguments for `main`."""
     parser = ArgumentParser()
     parser.add_argument("--json_files", type=FileType("rt"), nargs="+")
-    parser.add_argument("--color_by", type=str, required=False, default="none",
+    parser.add_argument("--color_by", type=str, required=False, default="ips_strategy",
                         choices=["none", "ips_strategy", "optimizer"])
     parser.add_argument("--out", type=FileType("wb"), required=False, default=None)
     parser.add_argument("--dataset", type=str, required=False, default="vali")
@@ -78,14 +78,9 @@ def main(args):
 
         # Print all loaded results
         print_results = []
-        max_last_y = 1e30 if args.metric == "arp" else 0.0
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
                 y = results[args.dataset][args.model][args.metric][-1]
-                if args.metric == "arp":
-                    max_last_y = min(y, max_last_y)
-                else:
-                    max_last_y = max(y, max_last_y)
                 print_results.append((y, name))
         for value, name in sorted(print_results, key=lambda e: e[0]):
             print(f"{name:12s} {value:.4f}")
@@ -96,7 +91,7 @@ def main(args):
             best = {}
             for name, results in data.items():
                 if args.dataset in results and args.model in results[args.dataset]:
-                    y = results[args.dataset][args.model][args.metric][-1]
+                    y = np.mean(results[args.dataset][args.model][args.metric])
                     if args.metric == "arp":
                         y = -y
                     a = deepcopy(results['args'])
@@ -112,10 +107,11 @@ def main(args):
             print_results = []
             for name, results in data.items():
                 if args.dataset in results and args.model in results[args.dataset]:
-                    y = results[args.dataset][args.model][args.metric][-1]
-                    print_results.append((y, name))
-            for value, name in sorted(print_results, key=lambda e: e[0]):
-                print(f"{name:12s} {value:.4f}")
+                    y = np.mean(results[args.dataset][args.model][args.metric])
+                    x = results[args.dataset][args.model]["iteration"][-1]
+                    print_results.append((y, x, name))
+            for value, x, name in sorted(print_results, key=lambda e: e[0]):
+                print(f"{name:12s} {value:.4f} [{x:6d}]")
 
         # Compute error bars for identical runs with multiple seeds
         if args.seed_error_bars:
@@ -150,22 +146,28 @@ def main(args):
                     "args": run['args']
                 }
 
+        # Compute y limits
+        max_last_y = 0.0
+        min_last_y = 1e30
+        for name, results in data.items():
+            if args.dataset in results and args.model in results[args.dataset]:
+                y = results[args.dataset][args.model][args.metric][-1]
+                min_last_y = min(y, min_last_y)
+                max_last_y = max(y, max_last_y)
+
         # Plot actual results
         for name, results in data.items():
             if args.dataset in results and args.model in results[args.dataset]:
                 ys = np.array(results[args.dataset][args.model][args.metric])
                 xs = np.array(results[args.dataset][args.model]["iteration"])
-                xs = xs * int(results['args']['batch_size'])
+                xs = (xs * int(results['args']['batch_size'])) / 1_000_000
                 ax.plot(xs, ys, label=name, color=color(name))
                 if f"{args.metric}/std" in results[args.dataset][args.model]:
                     ys_std = np.array(results[args.dataset][args.model][f"{args.metric}/std"])
                     ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
-        if args.metric == "arp":
-            ax.set_ylim([0.98 * max_last_y, 1.06 * max_last_y])
-        elif args.metric == "ndcg@10":
-            ax.set_ylim([0.94 * max_last_y, 1.02 * max_last_y])
+        ax.set_ylim([0.96 * max_last_y, 1.01 * max_last_y])
         ax.set_ylabel(args.metric)
-        ax.set_xlabel("nr samples")
+        ax.set_xlabel("Epochs")
         fig.legend()
 
     plot_data(args, fig)

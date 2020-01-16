@@ -1,13 +1,13 @@
 # Results for optimizers experiment under yahoo dataset.
-yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_none_seed_420$(i).json)
-yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_weight_seed_420$(i).json)
-yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_sample_seed_420$(i).json)
-yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_none_seed_420$(i).json)
-yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_weight_seed_420$(i).json)
-yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_sample_seed_420$(i).json)
-yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_none_seed_420$(i).json)
-yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_420$(i).json)
-yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_420$(i).json)
+yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_none_seed_42$(i).json)
+yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_weight_seed_42$(i).json)
+yahoo_optimizers_sgd_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_sgd_sample_seed_42$(i).json)
+yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_none_seed_42$(i).json)
+yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_weight_seed_42$(i).json)
+yahoo_optimizers_adam_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adam_sample_seed_42$(i).json)
+yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_none_seed_42$(i).json)
+yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_42$(i).json)
+yahoo_optimizers_adagrad_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_42$(i).json)
 yahoo_optimizers_repeat_5 : yahoo_optimizers_sgd_repeat_5 yahoo_optimizers_adam_repeat_5 yahoo_optimizers_adagrad_repeat_5
 .PHONY: yahoo_optimizers_repeat_5 yahoo_optimizers_sgd_repeat_5 yahoo_optimizers_adam_repeat_5 yahoo_optimizers_adagrad_repeat_5
 
@@ -34,7 +34,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : $(BUILD)/clicklogs/ya
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-05 \
+		--lr 1e-05 \
 		--optimizer sgd \
 		--ips_strategy weight \
 		--batch_size 1 \
@@ -83,7 +83,7 @@ $(BUILD)/results/optimizers/yahoo_adam_weight_seed_%.json : $(BUILD)/clicklogs/y
 		--train_data $(YAHOO_DIR)/train.txt \
 		--test_data $(YAHOO_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 1e-05 \
+		--lr 1e-04 \
 		--optimizer adam \
 		--ips_strategy weight \
 		--batch_size 1 \

@@ -1,13 +1,13 @@
 # Results for batch sizes experiment under istella dataset.
-istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_none_seed_420$(i).json)
-istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_weight_seed_420$(i).json)
-istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_sample_seed_420$(i).json)
-istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_none_seed_420$(i).json)
-istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_weight_seed_420$(i).json)
-istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_sample_seed_420$(i).json)
-istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_none_seed_420$(i).json)
-istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_weight_seed_420$(i).json)
-istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_sample_seed_420$(i).json)
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_none_seed_42$(i).json)
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_weight_seed_42$(i).json)
+istella_batch_sizes_10_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_10_sample_seed_42$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_none_seed_42$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_weight_seed_42$(i).json)
+istella_batch_sizes_20_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_20_sample_seed_42$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_none_seed_42$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_weight_seed_42$(i).json)
+istella_batch_sizes_50_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/batch_sizes/istella_50_sample_seed_42$(i).json)
 istella_batch_sizes_repeat_5: istella_batch_sizes_10_repeat_5 istella_batch_sizes_20_repeat_5 istella_batch_sizes_50_repeat_5
 .PHONY: istella_batch_sizes_repeat_5 istella_batch_sizes_10_repeat_5 istella_batch_sizes_20_repeat_5 istella_batch_sizes_50_repeat_5
 
@@ -18,7 +18,7 @@ $(BUILD)/results/batch_sizes/istella_10_none_seed_%.json : $(BUILD)/clicklogs/is
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-04 \
+		--lr 1e-03 \
 		--optimizer sgd \
 		--ips_strategy none \
 		--batch_size 10 \
@@ -50,7 +50,7 @@ $(BUILD)/results/batch_sizes/istella_10_sample_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-06 \
+		--lr 1e-05 \
 		--optimizer sgd \
 		--ips_strategy sample \
 		--batch_size 10 \
@@ -83,7 +83,7 @@ $(BUILD)/results/batch_sizes/istella_20_weight_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-06 \
+		--lr 1e-05 \
 		--optimizer sgd \
 		--ips_strategy weight \
 		--batch_size 20 \
@@ -99,7 +99,7 @@ $(BUILD)/results/batch_sizes/istella_20_sample_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 3e-06 \
+		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy sample \
 		--batch_size 20 \
@@ -132,7 +132,7 @@ $(BUILD)/results/batch_sizes/istella_50_weight_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 1e-05 \
+		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy weight \
 		--batch_size 50 \
@@ -148,7 +148,7 @@ $(BUILD)/results/batch_sizes/istella_50_sample_seed_%.json : $(BUILD)/clicklogs/
 		--train_data $(ISTELLA_DIR)/train.txt \
 		--test_data $(ISTELLA_DIR)/test.txt \
 		--output $@.tmp \
-		--lr 1e-05 \
+		--lr 3e-05 \
 		--optimizer sgd \
 		--ips_strategy sample \
 		--batch_size 50 \
