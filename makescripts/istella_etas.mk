@@ -1,23 +1,22 @@
 # Results for batch sizes experiment under istella dataset.
-istella_none_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_none_seed_42$(i).json)
-istella_none_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_none_seed_42$(i).json)
-istella_none_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_none_seed_42$(i).json)
-istella_none_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_none_seed_42$(i).json)
-istella_none_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_none_seed_42$(i).json)
+istella_etas_0_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_none_seed_42$(i).json)
+istella_etas_0_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_weight_seed_42$(i).json)
+istella_etas_0_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_sample_seed_42$(i).json)
+istella_etas_0_75_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_none_seed_42$(i).json)
+istella_etas_0_75_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_weight_seed_42$(i).json)
+istella_etas_0_75_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_sample_seed_42$(i).json)
+istella_etas_1_0_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_none_seed_42$(i).json)
+istella_etas_1_0_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_weight_seed_42$(i).json)
+istella_etas_1_0_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_sample_seed_42$(i).json)
+istella_etas_1_25_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_none_seed_42$(i).json)
+istella_etas_1_25_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_weight_seed_42$(i).json)
+istella_etas_1_25_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_sample_seed_42$(i).json)
+istella_etas_1_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_none_seed_42$(i).json)
+istella_etas_1_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_weight_seed_42$(i).json)
+istella_etas_1_5_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_sample_seed_42$(i).json)
 
-istella_weight_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_weight_seed_42$(i).json)
-istella_weight_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_weight_seed_42$(i).json)
-istella_weight_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_weight_seed_42$(i).json)
-istella_weight_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_weight_seed_42$(i).json)
-istella_weight_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_weight_seed_42$(i).json)
-
-istella_sample_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.5_sample_seed_42$(i).json)
-istella_sample_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_0.75_sample_seed_42$(i).json)
-istella_sample_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.0_sample_seed_42$(i).json)
-istella_sample_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.25_sample_seed_42$(i).json)
-istella_sample_etas_repeat_5: $(foreach i,1 2 3 4 5,$(BUILD)/results/etas/istella_1.5_sample_seed_42$(i).json)
-istella_etas_repeat_5: istella_none_etas_repeat_5 istella_weight_etas_repeat_5 istella_sample_etas_repeat_5
-.PHONY: istella_etas_repeat_5 istella_none_etas_repeat_5 istella_weight_etas_repeat_5 istella_sample_etas_repeat_5
+istella_etas_repeat_5: istella_etas_0_5_repeat_5 istella_etas_0_75_repeat_5 istella_etas_1_0_repeat_5 istella_etas_1_25_repeat_5 istella_etas_1_5_repeat_5
+.PHONY: istella_etas_repeat_5 istella_etas_0_5_repeat_5 istella_etas_0_75_repeat_5 istella_etas_1_0_repeat_5 istella_etas_1_25_repeat_5 istella_etas_1_5_repeat_5
 
 # Eta 1.0
 $(BUILD)/results/etas/istella_1.0_none_seed_%.json : $(BUILD)/results/optimizers/istella_sgd_none_seed_%.json | $(BUILD)/results/etas/
