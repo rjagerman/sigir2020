@@ -4,6 +4,8 @@ import json
 from argparse import ArgumentParser
 
 import torch
+import random
+import time
 from torchcontrib.optim import SWA
 from ignite.engine import Engine
 from ignite.engine import Events
@@ -52,6 +54,7 @@ def get_parser():
     parser.add_argument("--max_list_size", type=int, default=None)
     parser.add_argument("--log_every", type=int, default=None)
     parser.add_argument("--eval_every", type=int, default=None)
+    parser.add_argument("--delay_start", action="store_true", default=False)
     return parser
 
 
@@ -140,6 +143,11 @@ def create_ltr_evaluator(model, device, metrics):
 
 def main(args):
     """Trains the baseline ranker using given arguments."""
+
+    if args.delay_start:
+        seconds = random.randint(0, 120)
+        LOGGER.info("Delaying start of execution by %d seconds", seconds)
+        time.sleep(seconds)
 
     LOGGER.info("Setting device and seeding RNG")
     device = get_torch_device(args.enable_cuda)
