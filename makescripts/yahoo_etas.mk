@@ -41,7 +41,7 @@ $(BUILD)/results/etas/yahoo_0.5_none_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_p
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_0.5_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_0.5.clog | $(BUILD)/results/etas/
@@ -57,7 +57,7 @@ $(BUILD)/results/etas/yahoo_0.5_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_0.5_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_0.5.clog | $(BUILD)/results/etas/
@@ -73,7 +73,7 @@ $(BUILD)/results/etas/yahoo_0.5_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 # Eta 0.75
@@ -90,7 +90,7 @@ $(BUILD)/results/etas/yahoo_0.75_none_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_0.75_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_0.75.clog | $(BUILD)/results/etas/
@@ -106,7 +106,7 @@ $(BUILD)/results/etas/yahoo_0.75_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_0.75_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_0.75.clog | $(BUILD)/results/etas/
@@ -122,7 +122,7 @@ $(BUILD)/results/etas/yahoo_0.75_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 
@@ -140,7 +140,7 @@ $(BUILD)/results/etas/yahoo_1.25_none_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_1.25_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.25.clog | $(BUILD)/results/etas/
@@ -156,7 +156,7 @@ $(BUILD)/results/etas/yahoo_1.25_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_1.25_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.25.clog | $(BUILD)/results/etas/
@@ -172,7 +172,7 @@ $(BUILD)/results/etas/yahoo_1.25_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 
@@ -190,7 +190,7 @@ $(BUILD)/results/etas/yahoo_1.5_none_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_p
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_1.5_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog | $(BUILD)/results/etas/
@@ -206,7 +206,7 @@ $(BUILD)/results/etas/yahoo_1.5_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/etas/yahoo_1.5_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.5.clog | $(BUILD)/results/etas/
@@ -222,5 +222,5 @@ $(BUILD)/results/etas/yahoo_1.5_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m
 		--log_every 10000 \
 		--eval_every 10000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@

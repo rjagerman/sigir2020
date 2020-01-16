@@ -25,7 +25,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_none_seed_%.json : $(BUILD)/clicklogs/yaho
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -41,7 +41,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_weight_seed_%.json : $(BUILD)/clicklogs/ya
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_sgd_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -57,7 +57,7 @@ $(BUILD)/results/optimizers/yahoo_sgd_sample_seed_%.json : $(BUILD)/clicklogs/ya
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 # Adam
@@ -74,7 +74,7 @@ $(BUILD)/results/optimizers/yahoo_adam_none_seed_%.json : $(BUILD)/clicklogs/yah
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adam_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -90,7 +90,7 @@ $(BUILD)/results/optimizers/yahoo_adam_weight_seed_%.json : $(BUILD)/clicklogs/y
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adam_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -106,7 +106,7 @@ $(BUILD)/results/optimizers/yahoo_adam_sample_seed_%.json : $(BUILD)/clicklogs/y
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 # Adagrad
@@ -123,7 +123,7 @@ $(BUILD)/results/optimizers/yahoo_adagrad_none_seed_%.json : $(BUILD)/clicklogs/
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -139,7 +139,7 @@ $(BUILD)/results/optimizers/yahoo_adagrad_weight_seed_%.json : $(BUILD)/clicklog
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@
 
 $(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_%.json : $(BUILD)/clicklogs/yahoo_1m_position_eta_1.0.clog | $(BUILD)/results/optimizers/
@@ -155,5 +155,5 @@ $(BUILD)/results/optimizers/yahoo_adagrad_sample_seed_%.json : $(BUILD)/clicklog
 		--log_every 10_000 \
 		--eval_every 10_000 \
 		--epochs 5 \
-		--seed $*
+		--seed $* $(TRAIN_ARGS)
 	mv $@.tmp $@

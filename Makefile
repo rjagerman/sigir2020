@@ -2,6 +2,7 @@
 YAHOO_DIR ?= /Users/rolfjagerman/Datasets/Yahoo/set1
 ISTELLA_DIR ?= /Users/rolfjagerman/Datasets/istella-s
 BUILD ?= build
+TRAIN_ARGS ?=
 
 # Default is to run the entire experimental pipeline
 .PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
