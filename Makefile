@@ -6,7 +6,7 @@ TRAIN_ARGS ?=
 
 # Default is to run the entire experimental pipeline
 .PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
-all: baselines clicklogs
+all: plots
 baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
 yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog
 yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog
@@ -224,6 +224,7 @@ include makescripts/yahoo_etas.mk
 include makescripts/istella_optimizers.mk
 include makescripts/istella_batch_sizes.mk
 include makescripts/istella_etas.mk
+include makescripts/plots.mk
 
 $(BUILD)/results/optimizers/ :
 	mkdir -p $(BUILD)/results/optimizers/
@@ -233,3 +234,6 @@ $(BUILD)/results/batch_sizes/ :
 
 $(BUILD)/results/etas/ :
 	mkdir -p $(BUILD)/results/etas/
+
+$(BUILD)/plots/ :
+	mkdir -p $(BUILD)/plots/

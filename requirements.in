@@ -4,3 +4,4 @@ git+ssh://git@github.com/rjagerman/pytorchltr.git#egg=pytorchltr
 matplotlib
 pytorch-ignite
 torchcontrib
+tikzplotlib
