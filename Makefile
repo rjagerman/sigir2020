@@ -277,6 +277,7 @@ include makescripts/istella_optimizers.mk
 include makescripts/istella_batch_sizes.mk
 include makescripts/istella_etas.mk
 include makescripts/plots.mk
+include makescripts/tables.mk
 
 $(BUILD)/results/optimizers/ :
 	mkdir -p $(BUILD)/results/optimizers/

@@ -15,6 +15,7 @@ def get_parser():
     """Gets the parser to create arguments for `main`."""
     parser = ArgumentParser()
     parser.add_argument("--json_files", type=FileType("rt"), nargs="+")
+    parser.add_argument("--skylines", type=FileType("rt"), nargs="+")
     parser.add_argument("--out", type=FileType("wb"), required=False, default=None)
     parser.add_argument("--dataset", type=str, required=False, default="vali")
     parser.add_argument("--model", type=str, required=False, default="avgmodel")
@@ -38,8 +39,14 @@ def main(args):
 
     def create_table(args):
         data = {}
+        skylines = {}
         for json_file in args.json_files:
             data[os.path.basename(json_file.name)] = json.load(json_file)
+            json_file.seek(0)
+
+        for json_file in args.skylines:
+            dataset = "istella" if "istella" in json_file.name else "yahoo"
+            skylines[dataset] = json.load(json_file)
             json_file.seek(0)
 
         # Compute error bars for identical runs with multiple seeds
@@ -67,7 +74,7 @@ def main(args):
         data = {}
         for run in avg_runs.values():
             dataset = "istella" if "istella" in run["args"]["train_data"] else "yahoo"
-            regret = np.mean(max_y[dataset] - np.array(run['results'][args.dataset][args.model][args.metric]), axis=1)
+            regret = np.mean(skylines[dataset][args.metric] - np.array(run['results'][args.dataset][args.model][args.metric]), axis=1)
             ys_mean, ys_std, ys_n = np.mean(regret), np.std(regret), regret.shape[0]
             method = run["args"]["ips_strategy"]
             batch_size = run["args"]["batch_size"]
