@@ -98,6 +98,7 @@ def main(args):
             "yahoo": r"\Yahoo{}",
             "istella": r"\Istella{}"
         }
+        print(r"%!TEX root = ../sigir2020.tex")
         print(r"\begin{tabular}{l@{\hspace{6mm}}rrr}")
         print(r"\toprule")
         print(r"Optimizer: & SGD & \textsc{Adam} & \textsc{Adagrad} \\")

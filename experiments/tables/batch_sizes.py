@@ -119,6 +119,7 @@ def main(args):
         #     print(" & ".join(result_row) + r" \\")
         # print(r"\bottomrule")
         # print(r"\end{tabular}")
+        print(r"%!TEX root = ../sigir2020.tex")
         print(r"\begin{tabular}{l@{\hspace{6mm}}rrr}")
         print(r"\toprule")
         print(r"Batch size: & 10 & 20 & 50 \\")

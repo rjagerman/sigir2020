@@ -102,6 +102,7 @@ def main(args):
             "yahoo": r"\Yahoo{}",
             "istella": r"\Istella{}"
         }
+        print(r"%!TEX root = ../sigir2020.tex")
         print(r"\begin{tabular}{l@{\hspace{6mm}}rrrrr}")
         print(r"\toprule")
         print(r"Position bias ($\gamma$): & 0.5 & 0.75 & 1.0 & 1.25 & 1.5 \\")
