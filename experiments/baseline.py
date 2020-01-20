@@ -28,12 +28,15 @@ def get_parser():
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--loss", choices=["rank", "dcg"], default="rank")
     return parser
 
 
 def main(args):
     """Trains the baseline ranker using given arguments."""
     torch.manual_seed(args.seed)
+
+    LOGGER.info("Starting baseline run with args: %s", f"{args}")
 
     LOGGER.info("Loading train data %s", args.train_data)
     train = load_ranking_dataset(args.train_data, normalize=True)
@@ -56,7 +59,7 @@ def main(args):
         "adam": lambda: torch.optim.Adam(linear_model.parameters(), args.lr),
         "adagrad": lambda: torch.optim.Adagrad(linear_model.parameters(), args.lr)
     }[args.optimizer]()
-    loss_fn = AdditivePairwiseLoss("rank")
+    loss_fn = AdditivePairwiseLoss(args.loss)
 
     LOGGER.info("Start training")
     for e in range(1, 1 + args.epochs):
