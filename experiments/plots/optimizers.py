@@ -165,7 +165,7 @@ def main(args):
                         if f"{args.metric}/std" in results[args.dataset][args.model]:
                             ys_std = np.array(results[args.dataset][args.model][f"{args.metric}/std"])
                             ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
-                ax.set_ylim([0.98 * min_last_y, 1.01 * max_last_y])
+                ax.set_ylim([0.99 * min_last_y, 1.01 * max_last_y])
                 if dataset == "yahoo":
                     ax.set_title(f"Optimizer = {optimizers[optimizer]}")
                 if i == 0:
@@ -173,7 +173,7 @@ def main(args):
                 else:
                     ax.set_yticklabels([])
                 if dataset == "istella":
-                    ax.set_xlabel("Epochs")
+                    ax.set_xlabel(r"Iterations ($\times 10^6$)")
                 else:
                     ax.set_xticklabels([])
                 ax.set_xticks(np.arange(0, 5 + 1, step=1.0))
@@ -185,7 +185,7 @@ def main(args):
             keys = sorted(by_label.keys(), key=lambda key: sorting[inv_labels[key]])
             values = [by_label[key] for key in keys]
             fig.legend(values, keys, loc='upper center',
-                       bbox_to_anchor=(0.5 + 0.02, 1.0 + 0.07), ncol=3)
+                       bbox_to_anchor=(0.5 + 0.02, 1.0 + 0.05), ncol=3)
 
     plot_data(args, fig)
     plt.tight_layout()
