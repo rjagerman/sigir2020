@@ -9,7 +9,7 @@ class DeepScorer(torch.nn.Module):
         self.layers = torch.nn.ModuleList([])
         self.activations = torch.nn.ModuleList([])
         for layer in layers:
-            self.layers.append(torch.nn.Linear(input_size, layer))
+            self.layers.append(torch.nn.Linear(current_size, layer))
             self.activations.append(activation_fn())
             current_size = layer
         self.output = torch.nn.Linear(current_size, 1)

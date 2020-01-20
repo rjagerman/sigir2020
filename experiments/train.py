@@ -20,6 +20,7 @@ from experiments.click_log import create_clicklog_collate_fn
 from experiments.dataset import load_click_dataset
 from experiments.dataset import load_ranking_dataset
 from experiments.models import LinearScorer
+from experiments.models import DeepScorer
 from experiments.util import get_torch_device
 from experiments.util import JsonLogger
 from experiments.util import every_n_iteration
@@ -51,6 +52,7 @@ def get_parser():
     parser.add_argument("--n_clicks", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--layers", type=int, nargs="+", default=None)
     parser.add_argument("--max_list_size", type=int, default=None)
     parser.add_argument("--log_every", type=int, default=None)
     parser.add_argument("--eval_every", type=int, default=None)
@@ -185,7 +187,10 @@ def main(args):
             collate_fn=create_svmranking_collate_fn())
 
     LOGGER.info("Creating linear model")
-    model = LinearScorer(input_dimensionality)
+    if args.layers is None:
+        model = LinearScorer(input_dimensionality)
+    else:
+        model = DeepScorer(input_dimensionality, args.layers)
     model = model.to(device=device)
 
     LOGGER.info("Creating loss function (bcf=%f)", bcf)
