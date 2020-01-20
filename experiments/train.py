@@ -52,6 +52,7 @@ def get_parser():
     parser.add_argument("--n_clicks", type=int, default=None)
     parser.add_argument("--epochs", type=int, default=50)
     parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--momentum", type=float, default=0.0)
     parser.add_argument("--layers", type=int, nargs="+", default=None)
     parser.add_argument("--max_list_size", type=int, default=None)
     parser.add_argument("--log_every", type=int, default=None)
@@ -199,7 +200,7 @@ def main(args):
 
     LOGGER.info("Creating optimizer")
     optimizer = {
-        "sgd": lambda: torch.optim.SGD(model.parameters(), args.lr),
+        "sgd": lambda: torch.optim.SGD(model.parameters(), args.lr, momentum=args.momentum),
         "adam": lambda: torch.optim.Adam(model.parameters(), args.lr),
         "adagrad": lambda: torch.optim.Adagrad(model.parameters(), args.lr)
     }[args.optimizer]()
