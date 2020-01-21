@@ -30,6 +30,7 @@ def get_parser():
     parser.add_argument("--legend", action="store_true", default=False)
     parser.add_argument("--width", type=float, default=12.0)
     parser.add_argument("--height", type=float, default=3.0)
+    parser.add_argument("--format", type=str, default=None)
     return parser
 
 
@@ -194,7 +195,7 @@ def main(args):
         if args.out.name.endswith(".tex"):
             tikzplotlib.save(args.out.name)
         else:
-            plt.savefig(args.out, bbox_inches="tight")
+            plt.savefig(args.out, bbox_inches="tight", format=args.format)
     else:
         plt.show()
 

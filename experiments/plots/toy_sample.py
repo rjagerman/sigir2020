@@ -20,6 +20,7 @@ def get_parser():
     """Gets the parser to create arguments for `main`."""
     parser = ArgumentParser()
     parser.add_argument("--out", type=FileType("wb"), required=False, default=None)
+    parser.add_argument("--format", type=str, default=None)
     return parser
 
 
@@ -141,7 +142,7 @@ def main(args):
     plt.xlabel("$w_1$")
     plt.ylabel("$w_2$")
     plt.tight_layout()
-    plt.savefig(args.out)
+    plt.savefig(args.out, format=args.format)
 
 if __name__ == "__main__":
     main(get_parser().parse_args())
