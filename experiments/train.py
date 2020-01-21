@@ -187,10 +187,11 @@ def main(args):
             shuffle=False, batch_size=args.eval_batch_size,
             collate_fn=create_svmranking_collate_fn())
 
-    LOGGER.info("Creating linear model")
     if args.layers is None:
+        LOGGER.info("Creating linear model")
         model = LinearScorer(input_dimensionality)
     else:
+        LOGGER.info("Creating deep model")
         model = DeepScorer(input_dimensionality, args.layers)
     model = model.to(device=device)
 
