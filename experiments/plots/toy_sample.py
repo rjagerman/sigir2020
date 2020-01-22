@@ -26,7 +26,7 @@ def get_parser():
 
 def main(args):
     # Parameters for toy data and experiments
-    plt.figure(figsize=(6.4,3.7))
+    plt.figure(figsize=(6.4,3.5))
     rng_seed = 42
     np.random.seed(rng_seed)
 
@@ -71,7 +71,7 @@ def main(args):
                 optimizer.swap_swa_sgd()
                 x, y = model.weight.data.numpy()[0]
                 ox, oy = old_weights[0]
-                label = f"IPS SGD ($\\eta={lr}$)"
+                label = f"IPS-SGD ($\\eta={lr}$)"
                 arr = plt.arrow(ox, oy, x - ox, y - oy, width=arrow_width, length_includes_head=True,
                         color=color, label=label)
                 old_weights = np.copy(model.weight.data.numpy())
@@ -102,7 +102,7 @@ def main(args):
         if t % plot_every == 0:
             x, y = model.weight.data.numpy()[0]
             ox, oy = old_weights[0]
-            label = f"CounterSample ($\\eta={lr}$)"
+            label = f"\\textsc{{CounterSample}} ($\\eta={lr}$)"
             arr = plt.arrow(ox, oy, x - ox, y - oy, width=arrow_width, length_includes_head=True,
                     color="C2", label=label)
             old_weights = np.copy(model.weight.data.numpy())
@@ -117,7 +117,7 @@ def main(args):
     # Compute all useful combinations of weights and compute true loss for each one
     # This will be used to compute a contour plot
     true_x1 = np.linspace(float(wstar[0, 0]) - 1.5, float(wstar[0, 0]) + 0.8) # - 1.5 / + 1.0
-    true_x2 = np.linspace(float(wstar[0, 1]) - 1.5, float(wstar[0, 1]) + 1.6) # - 1.5 / + 1.0
+    true_x2 = np.linspace(float(wstar[0, 1]) - 1.5, float(wstar[0, 1]) + 1.2) # - 1.5 / + 1.0
     true_x1, true_x2 = np.meshgrid(true_x1, true_x2)
     true_y = np.array([
         [f(true_x1[i1, i2], true_x2[i1, i2]) for i2 in range(len(true_x2))]
@@ -136,9 +136,16 @@ def main(args):
                                 head_width=0.75*height)
         return p
 
-    labels = [key for key in sorted(legends.keys())]
-    arrows = [legends[key] for key in sorted(legends.keys())]
-    plt.legend(arrows, labels, ncol=2, loc='upper center', framealpha=0.95, handler_map={mpatches.FancyArrow : HandlerPatch(patch_func=make_legend_arrow)})
+    def sort_op(key):
+        if "CounterSample" in key:
+            return ""
+        else:
+            return key
+
+    labels = [key for key in sorted(legends.keys(), key=sort_op)]
+    arrows = [legends[key] for key in sorted(legends.keys(), key=sort_op)]
+    plt.legend(arrows, labels, ncol=2, loc='upper center', framealpha=0.95, handler_map={mpatches.FancyArrow : HandlerPatch(patch_func=make_legend_arrow)},
+               bbox_to_anchor=(0.5, 1.0 + 0.03))
     plt.xlabel("$w_1$")
     plt.ylabel("$w_2$")
     plt.tight_layout()

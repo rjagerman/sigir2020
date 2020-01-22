@@ -31,6 +31,7 @@ def get_parser():
     parser.add_argument("--width", type=float, default=12.0)
     parser.add_argument("--height", type=float, default=3.0)
     parser.add_argument("--format", type=str, default=None)
+    parser.add_argument("--points", type=int, default=None)
     return parser
 
 
@@ -66,6 +67,20 @@ def compress_list_of_arrays(list_of_arrays):
 
 def filter_arg(dictionary, key, func):
     return {k: v for k, v in dictionary.items() if func(v["args"][key])}
+
+
+def sample_points(xs, points):
+    if points is None:
+        return xs
+    else:
+        # Plot the first 20% of the points perfectly (where convergence mostly takes place),
+        # subsample the remainder of the points to prevent very slow PDF viewing
+        start_points = points // 5
+        end_points = points - start_points
+        sample = np.hstack([
+            np.arange(start_points, dtype=np.int32),
+            np.linspace(start_points, xs.shape[0] - 1, num=end_points, dtype=np.int32)])
+        return xs[sample]
 
 
 def main(args):
@@ -161,12 +176,15 @@ def main(args):
                         ys = np.array(results[args.dataset][args.model][args.metric])
                         xs = np.array(results[args.dataset][args.model]["iteration"])
                         xs = (xs * int(results['args']['batch_size'])) / 1_000_000
+                        xs = sample_points(xs, args.points)
+                        ys = sample_points(ys, args.points)
                         label = f"{results['args']['ips_strategy']}"
-                        ax.plot(xs, ys, label=labels[label], color=color(name), marker=markers[label], markevery=0.1)
+                        ax.plot(xs, ys, label=labels[label], color=color(name), marker=markers[label], markevery=0.1, markersize=4.5)
                         if f"{args.metric}/std" in results[args.dataset][args.model]:
                             ys_std = np.array(results[args.dataset][args.model][f"{args.metric}/std"])
+                            ys_std = sample_points(ys_std, args.points)
                             ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
-                ax.set_ylim([0.99 * min_last_y, 1.01 * max_last_y])
+                ax.set_ylim([0.98 * min_last_y, 1.01 * max_last_y])
                 if dataset == "yahoo":
                     ax.set_title(f"$\\gamma$ = {eta}")
                 if i == 0:
