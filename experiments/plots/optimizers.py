@@ -8,7 +8,7 @@ from argparse import FileType
 
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}\n\\usepackage[libertine]{newtxmath}' #\\usepackage{libertine}\n
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}' #\\usepackage{libertine}\n
 matplotlib.rcParams['text.usetex'] = True
 matplotlib.rcParams.update({'font.size': 13})
 import tikzplotlib

@@ -3,7 +3,7 @@ from argparse import FileType
 
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}\n\\usepackage[libertine]{newtxmath}' #\\usepackage{libertine}\n
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}' #\\usepackage{libertine}\n
 matplotlib.rcParams['text.usetex'] = True
 matplotlib.rcParams.update({'font.size': 14})
 import torch
@@ -110,7 +110,7 @@ def main(args):
 
     # True IPS-weighted loss over all datapoints, used for plotting contour
     def f(x1, x2):
-        w = torch.tensor([[x1], [x2]])
+        w = torch.tensor([[x1], [x2]], dtype=torch.float)
         o = torch.mm(xs, w)
         return float(loss_fn(o, torch.mm(xs, wstar.reshape((2, 1))), ips))
 

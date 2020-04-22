@@ -6,19 +6,19 @@
 #
 appnope==0.1.0            # via ipython
 backcall==0.1.0           # via ipython
-decorator==4.4.1          # via ipython, traitlets
+decorator==4.4.2          # via ipython, traitlets
 ipython-genutils==0.2.0   # via traitlets
-ipython==7.9.0
-jedi==0.15.1              # via ipython
-parso==0.5.1              # via jedi
-pexpect==4.7.0            # via ipython
+ipython==7.13.0           # via -r dev-requirements.in
+jedi==0.17.0              # via ipython
+parso==0.7.0              # via jedi
+pexpect==4.8.0            # via ipython
 pickleshare==0.7.5        # via ipython
-prompt-toolkit==2.0.10    # via ipython
+prompt-toolkit==3.0.5     # via ipython
 ptyprocess==0.6.0         # via pexpect
-pygments==2.4.2           # via ipython
-six==1.13.0               # via prompt-toolkit, traitlets
+pygments==2.6.1           # via ipython
+six==1.14.0               # via traitlets
 traitlets==4.3.3          # via ipython
-wcwidth==0.1.7            # via prompt-toolkit
+wcwidth==0.1.9            # via prompt-toolkit
 
 # The following packages are considered to be unsafe in a requirements file:
-# setuptools==42.0.2        # via ipython
+# setuptools

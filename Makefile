@@ -6,7 +6,7 @@ TRAIN_ARGS ?=
 
 # Default is to run the entire experimental pipeline
 .PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
-all: plots
+all: plots tables
 baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
 yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog
 yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_position_eta_0.0.clog
