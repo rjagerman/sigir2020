@@ -8,7 +8,7 @@ from argparse import FileType
 
 import numpy as np
 import matplotlib
-matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage{sfmath}\n\\usepackage[T1]{fontenc}' #\\usepackage{libertine}\n
+matplotlib.rcParams['text.latex.preamble'] = '\\usepackage{biolinum}\n\\usepackage[T1]{fontenc}\n\\usepackage[libertine]{newtxmath}'
 matplotlib.rcParams['text.usetex'] = True
 matplotlib.rcParams.update({'font.size': 13})
 import tikzplotlib
@@ -73,9 +73,9 @@ def sample_points(xs, points):
     if points is None:
         return xs
     else:
-        # Plot the first 20% of the points perfectly (where convergence mostly takes place),
+        # Plot the first 10% of the points perfectly (where convergence mostly takes place),
         # subsample the remainder of the points to prevent very slow PDF viewing
-        start_points = points // 5
+        start_points = 0 # points // 10
         end_points = points - start_points
         sample = np.hstack([
             np.arange(start_points, dtype=np.int32),

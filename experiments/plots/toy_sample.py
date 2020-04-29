@@ -26,7 +26,7 @@ def get_parser():
 
 def main(args):
     # Parameters for toy data and experiments
-    plt.figure(figsize=(6.4,3.5))
+    plt.figure(figsize=(6.4,3.4))
     rng_seed = 42
     np.random.seed(rng_seed)
 
