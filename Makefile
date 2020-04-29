@@ -5,7 +5,7 @@ BUILD ?= build
 TRAIN_ARGS ?=
 
 # Default is to run the entire experimental pipeline
-.PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs
+.PHONY: all baselines clicklogs yahoo_clicklogs istella_clicklogs experiments
 all: plots tables
 baselines: $(BUILD)/baselines/yahoo.pth $(BUILD)/baselines/istella.pth
 yahoo_clicklogs: $(BUILD)/clicklogs/yahoo_1m_perfect.clog
@@ -27,6 +27,7 @@ istella_clicklogs: $(BUILD)/clicklogs/istella_1m_position_eta_1.5.clog
 istella_clicklogs: $(BUILD)/clicklogs/istella_1m_position_eta_2.0.clog
 istella_clicklogs: $(BUILD)/clicklogs/istella_1m_nearrandom_eta_1.0.clog
 clicklogs: yahoo_clicklogs istella_clicklogs
+experiments: yahoo_batch_sizes_repeat_5 istella_batch_sizes_repeat_5 yahoo_optimizers_repeat_5 istella_optimizers_repeat_5 yahoo_etas_repeat_5 istella_etas_repeat_5 $(BUILD)/skylines/yahoo.json $(BUILD)/skylines/istella.json
 
 
 # Baseline rankers trained on fractions of data
