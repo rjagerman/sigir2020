@@ -1,6 +1,8 @@
+# Phony target for easier dependencies
 tables: $(BUILD)/tables/batchsizes.tbl.tex $(BUILD)/tables/optimizers.tbl.tex $(BUILD)/tables/etas.tbl.tex
 .PHONY: tables
 
+# Scripts to generate tables in the paper
 $(BUILD)/tables/batchsizes.tbl.tex : $(BUILD)/skylines/yahoo.json $(BUILD)/skylines/istella.json | yahoo_batch_sizes_repeat_5 istella_batch_sizes_repeat_5 $(BUILD)/tables/
 	python -m experiments.tables.batch_sizes \
 		--json_files $(BUILD)/results/batch_sizes/*.json \
@@ -22,7 +24,3 @@ $(BUILD)/tables/etas.tbl.tex : $(BUILD)/skylines/yahoo.json $(BUILD)/skylines/is
 		--skylines $(BUILD)/skylines/*.json \
 		--dataset test > $@.tmp
 	mv $@.tmp $@
-
-
-$(BUILD)/tables/ :
-	mkdir -p $(BUILD)/tables/

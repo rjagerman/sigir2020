@@ -70,43 +70,51 @@ def main(args):
             if t % plot_every == 0:
                 optimizer.swap_swa_sgd()
                 x, y = model.weight.data.numpy()[0]
+                optimizer.swap_swa_sgd()
                 ox, oy = old_weights[0]
                 label = f"IPS-SGD ($\\eta={lr}$)"
                 arr = plt.arrow(ox, oy, x - ox, y - oy, width=arrow_width, length_includes_head=True,
                         color=color, label=label)
+                optimizer.swap_swa_sgd()
                 old_weights = np.copy(model.weight.data.numpy())
                 optimizer.swap_swa_sgd()
                 legends[label] = arr
 
     # Sample based approach
-    lr = 3.0 # 1.0
-    model = torch.nn.Linear(2, 1)
-    optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-    optimizer = SWA(optimizer, swa_start=0, swa_freq=1, swa_lr=lr)
-    with torch.no_grad():
-        model.bias.zero_()
-        model.weight.zero_()
-    old_weights = np.copy(model.weight.data.numpy())
-    sample_probs = np.array(ips / torch.sum(ips))
-    Mbar = float(np.mean(sample_probs))
-    np.random.seed(rng_seed)
-    for t in range(n_iters):
-        i = np.argwhere(np.random.multinomial(1, sample_probs) == 1.0)[0, 0]
-        x = xs[i, :]
-        y = labels[i]
-        optimizer.zero_grad()
-        o = model(x)
-        l = loss_fn(o, y, Mbar)
-        l.backward()
-        optimizer.step()
-        if t % plot_every == 0:
-            x, y = model.weight.data.numpy()[0]
-            ox, oy = old_weights[0]
-            label = f"\\textsc{{CounterSample}} ($\\eta={lr}$)"
-            arr = plt.arrow(ox, oy, x - ox, y - oy, width=arrow_width, length_includes_head=True,
-                    color="C2", label=label)
-            old_weights = np.copy(model.weight.data.numpy())
-            legends[label] = arr
+    for lr in [10.0]:
+        # lr = 3.0 # 1.0
+        model = torch.nn.Linear(2, 1)
+        optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+        optimizer = SWA(optimizer, swa_start=0, swa_freq=1, swa_lr=lr)
+        with torch.no_grad():
+            model.bias.zero_()
+            model.weight.zero_()
+        old_weights = np.copy(model.weight.data.numpy())
+        sample_probs = np.array(ips / torch.sum(ips))
+        Mbar = float(np.mean(sample_probs))
+        np.random.seed(rng_seed - 1)
+        for t in range(n_iters):
+            i = np.argwhere(np.random.multinomial(1, sample_probs) == 1.0)[0, 0]
+            x = xs[i, :]
+            y = labels[i]
+            optimizer.zero_grad()
+            o = model(x)
+            l = loss_fn(o, y, Mbar)
+            l.backward()
+            optimizer.step()
+            if t % plot_every == 0:
+                optimizer.swap_swa_sgd()
+                x, y = model.weight.data.numpy()[0]
+                optimizer.swap_swa_sgd()
+                ox, oy = old_weights[0]
+                label = f"\\textsc{{CounterSample}} ($\\eta={lr}$)"
+                arr = plt.arrow(ox, oy, x - ox, y - oy, width=arrow_width, length_includes_head=True,
+                        color="C2", label=label)
+
+                optimizer.swap_swa_sgd()
+                old_weights = np.copy(model.weight.data.numpy())
+                optimizer.swap_swa_sgd()
+                legends[label] = arr
 
     # True IPS-weighted loss over all datapoints, used for plotting contour
     def f(x1, x2):

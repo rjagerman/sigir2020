@@ -14,6 +14,7 @@ matplotlib.rcParams.update({'font.size': 13})
 import tikzplotlib
 from matplotlib import pyplot as plt
 from matplotlib import animation as anim
+from cycler import cycler
 plt.rcParams["figure.figsize"] = [12,3]
 
 
@@ -32,6 +33,8 @@ def get_parser():
     parser.add_argument("--height", type=float, default=3.0)
     parser.add_argument("--format", type=str, default=None)
     parser.add_argument("--points", type=int, default=None)
+    parser.add_argument("--darkstyle", action="store_true", default=False)
+    parser.add_argument("--datasets", type=str, nargs="+", default=["yahoo", "istella"])
     return parser
 
 
@@ -84,6 +87,14 @@ def sample_points(xs, points):
 
 
 def main(args):
+
+    if args.darkstyle:
+        plt.style.use('dark_background')
+        matplotlib.rcParams['axes.prop_cycle'] = cycler(color=[
+            'lightgrey',
+            'orange',
+            'deepskyblue'
+        ])
 
     fig = plt.figure(figsize=(args.width, args.height))
 
@@ -158,7 +169,7 @@ def main(args):
             "adam": "Adam",
             "adagrad": "Adagrad"
         }
-        for j, dataset in enumerate(["yahoo", "istella"]):
+        for j, dataset in enumerate(args.datasets):
             # Compute y limits
             max_last_y = 0.0
             min_last_y = 1e30
@@ -170,7 +181,7 @@ def main(args):
 
             # Plot subplots
             for i, optimizer in enumerate(["sgd", "adam", "adagrad"]):
-                ax = fig.add_subplot(2, 3, 1 + i + j * 3)
+                ax = fig.add_subplot(len(args.datasets), 3, 1 + i + j * 3)
                 for name, results in filter_arg(data, "optimizer", optimizer).items():
                     if args.dataset in results and args.model in results[args.dataset] and dataset in results["args"]["train_data"]:
                         ys = np.array(results[args.dataset][args.model][args.metric])
@@ -185,13 +196,13 @@ def main(args):
                             ys_std = sample_points(ys_std, args.points)
                             ax.fill_between(xs, ys - ys_std, ys + ys_std, color=color(name), alpha=0.35)
                 ax.set_ylim([0.99 * min_last_y, 1.01 * max_last_y])
-                if dataset == "yahoo":
+                if j == 0:
                     ax.set_title(f"Optimizer = {optimizers[optimizer]}")
                 if i == 0:
                     ax.set_ylabel(metrics[args.metric])
                 else:
                     ax.set_yticklabels([])
-                if dataset == "istella":
+                if j == len(args.datasets) - 1:
                     ax.set_xlabel(r"Iterations ($\times 10^6$)")
                 else:
                     ax.set_xticklabels([])
