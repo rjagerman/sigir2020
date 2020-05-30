@@ -14,7 +14,7 @@ pillow==7.1.1             # via tikzplotlib
 pyparsing==2.4.7          # via matplotlib
 python-dateutil==2.8.1    # via matplotlib
 pytorch-ignite==0.3.0     # via -r requirements.in
-git+ssh://git@github.com/rjagerman/pytorchltr.git#egg=pytorchltr  # via -r requirements.in
+git+ssh://git@github.com/rjagerman/pytorchltr.git@61f5cb87f8bb513bde1a6dec2c3142790228c840#egg=pytorchltr  # via -r requirements.in
 scikit-learn==0.22.2.post1  # via pytorchltr
 scipy==1.4.1              # via pytorchltr, scikit-learn
 six==1.14.0               # via cycler, python-dateutil

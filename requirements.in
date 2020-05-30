@@ -1,6 +1,6 @@
 numpy
 torch
-git+ssh://git@github.com/rjagerman/pytorchltr.git#egg=pytorchltr
+git+ssh://git@github.com/rjagerman/pytorchltr.git@61f5cb87f8bb513bde1a6dec2c3142790228c840#egg=pytorchltr
 matplotlib
 pytorch-ignite
 torchcontrib
