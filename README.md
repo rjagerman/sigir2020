@@ -1,5 +1,7 @@
 # Accelerated Convergence for Counterfactual Learning to Rank
 
+ :information_source: This software uses PyTorchLTR. Check it out [here](http://github.com/rjagerman/pytorchltr)!
+
 Source code with our SIGIR2020 paper.
 To run all experiments, build the plots and create the tables that appear in the paper run the following:
 
@@ -14,3 +16,4 @@ Or, if you are on macOS:
     make -j$(sysctl -n hw.logicalcpu)
 
 This can take significant amount of time depending on the number of CPU cores available.
+
